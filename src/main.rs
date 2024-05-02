@@ -10,6 +10,7 @@ use cli::{EvmCommands, DbCommands, ProcessType};
 pub mod config;
 pub mod cmd;
 pub mod cli;
+pub mod utils;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -17,7 +18,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let config = config::Config::default();
 
-    cmd::db::utils::check_exist_service(config.clone()).await?;
+    utils::check_exist_service(config.clone()).await?;
     cmd::db::utils::check_exist_db().await?;
 
     let anvil = Anvil::new().try_spawn()?;
