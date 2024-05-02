@@ -15,9 +15,10 @@ pub mod cli;
 async fn main() -> Result<(), Box<dyn Error>> {
     let args = cli::Args::parse();
 
-    cmd::db::utils::check_exist_db().await?;
-
     let config = config::Config::default();
+
+    cmd::db::utils::check_exist_service(config.clone()).await?;
+    cmd::db::utils::check_exist_db().await?;
 
     let anvil = Anvil::new().try_spawn()?;
 

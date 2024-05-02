@@ -21,7 +21,7 @@ pub async fn exec(
     });
 
     let response = reqwest::Client::new()
-        .post("")
+        .post("http://localhost:9999/v1/network/create")
         .header("x-auth-token", "")
         .header("Content-Type", "application/json")
         .body(body.to_string())
@@ -33,7 +33,7 @@ pub async fn exec(
             let data = response.json::<Value>().await?;
             println!("{} Network created: {}", "[API - NETWORK]".blue(), data["id"])
         },
-        _ => println!("{} Network not created", "[API - NETWORK]".blue()),
+        _ => println!("{} Network not created: {}", "[API - NETWORK]".blue(), response.text().await?),
     };
 
     Ok(())
