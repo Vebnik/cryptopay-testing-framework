@@ -1,0 +1,42 @@
+[package]
+name = "cryptopay-testing-framework"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ctf"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.4", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12.4" }
+colored = { version = "2.1.0" }
+
+[dependencies.alloy]
+git = "https://github.com/alloy-rs/alloy.git"
+features = [
+    "providers",
+    "network",
+    "contract",
+    "signers",
+    "signer-wallet",
+    "node-bindings",
+    "network",
+    "eips",
+    "transports"
+]
+
+[dependencies.sqlx]
+version = "0.7.4"
+features = [
+    "runtime-tokio-rustls",
+    "postgres",
+    "chrono",
+    "time",
+    "uuid",
+    "bigdecimal",
+]
+
+[dependencies.serde_json]
+version = "1.0.116"
