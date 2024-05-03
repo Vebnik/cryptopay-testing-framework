@@ -1,7 +1,7 @@
 use colored::Colorize;
 use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
-use std::error::Error;
+use std::{error::Error, sync::Arc};
 
 use crate::config::State;
 
@@ -9,7 +9,7 @@ pub async fn exec(
     name: String,
     kind: String,
     endpoint: String,
-    _sate: State,
+    _sate: Arc<State>,
 ) -> Result<(), Box<dyn Error>> {
     let body = json!({
         "name": name,

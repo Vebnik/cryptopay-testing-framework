@@ -8,7 +8,7 @@ pub mod utils;
 use alloy::{network::EthereumSigner, providers::ProviderBuilder, signers::wallet::LocalWallet};
 use clap::Parser;
 use sqlx::postgres::PgPoolOptions;
-use std::error::Error;
+use std::{error::Error, sync::Arc};
 
 use cli::{DbCommands, EvmCommands, ProcessType};
 
@@ -36,11 +36,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .connect(&config.db_connect_url)
         .await?;
 
-    let state = config::State {
+    let state = Arc::new(config::State {
         config,
         provider,
         db,
-    };
+    });
+
+    // other cheks
+    cmd::api::utils::user::check_exist_system_user(Arc::clone(&state)).await?;
 
     match &args.process {
         ProcessType::Evm { cmd } => match cmd {
@@ -49,13 +52,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 symbol,
                 amount,
             } => {
-                cmd::evm::deploy::exec(state, name.clone(), symbol.clone(), amount.clone()).await?;
+                cmd::evm::deploy::exec(Arc::clone(&state), name.clone(), symbol.clone(), amount.clone()).await?;
             }
         },
-        ProcessType::Api { cmd } => cmd::api::handler::exec(cmd.clone(), state).await?,
+        ProcessType::Api { cmd } => cmd::api::handler::exec(cmd.clone(), Arc::clone(&state)).await?,
         ProcessType::Db { cmd } => match cmd {
-            DbCommands::Drop => cmd::db::drop::exec(state).await?,
-            DbCommands::Create => cmd::db::create::exec(state).await?,
+            DbCommands::Drop => cmd::db::drop::exec(Arc::clone(&state)).await?,
+            DbCommands::Create => cmd::db::create::exec(Arc::clone(&state)).await?,
         },
     }
 

@@ -4,7 +4,7 @@ use alloy::{
     sol,
 };
 use colored::Colorize;
-use std::error::Error;
+use std::{error::Error, sync::Arc};
 
 use crate::config::State;
 
@@ -16,7 +16,7 @@ sol! {
 }
 
 pub async fn exec(
-    state: State,
+    state: Arc<State>,
     name: String,
     symbol: String,
     amount: u32,

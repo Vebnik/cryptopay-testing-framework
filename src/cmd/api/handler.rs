@@ -1,24 +1,25 @@
 use std::error::Error;
+use std::sync::Arc;
 
-use crate::cmd;
+use crate::cmd::api;
 use crate::{
-    cli::{ApiCommands, NetworkCommands},
+    cli::{ApiCommands, NetworkCommands, UserCommands},
     config::State,
 };
 
-pub async fn exec(cmd: ApiCommands, state: State) -> Result<(), Box<dyn Error>> {
+pub async fn exec(cmd: ApiCommands, state: Arc<State>) -> Result<(), Box<dyn Error>> {
     match cmd {
-        ApiCommands::UserFlow => {
-            println!("ApiCommands::UserFlow");
-        }
+        ApiCommands::User { cmd } => match cmd {
+            UserCommands::Create { name, admin, email} => {
+                api::user::create::exec(state, name, admin, email).await?;
+            },
+        },
         ApiCommands::Network { cmd } => match cmd {
             NetworkCommands::Create {
                 name,
                 kind,
                 endpoint,
-            } => {
-                cmd::api::network::create::exec(name, kind, endpoint, state).await?;
-            }
+            } => api::network::create::exec(name, kind, endpoint, state).await?,
         },
     };
 

@@ -27,9 +27,26 @@ pub enum NetworkCommands {
 }
 
 #[derive(Subcommand, Debug, Clone)]
+pub enum UserCommands {
+    Create {
+        /// Just user name
+        #[arg(default_value = "Test User")]
+        name: String,
+        /// Just user email [default: "test_<random_u32>@localhost.com"]
+        email: Option<String>,
+        /// Is admin
+        #[arg(short)]
+        admin: bool,
+    },
+}
+
+#[derive(Subcommand, Debug, Clone)]
 pub enum ApiCommands {
     /// Create user -> login -> create wallet ->  with wallet
-    UserFlow,
+    User {
+        #[command(subcommand)]
+        cmd: UserCommands,        
+    },
     /// Network api scope command
     Network {
         #[command(subcommand)]

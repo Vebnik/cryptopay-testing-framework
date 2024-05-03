@@ -1,10 +1,11 @@
-use std::error::Error;
+use std::{error::Error, sync::Arc};
+use colored::Colorize;
 
 use crate::config::State;
 
-pub async fn exec(state: State) -> Result<(), Box<dyn Error>> {
+pub async fn exec(state: Arc<State>) -> Result<(), Box<dyn Error>> {
     sqlx::migrate!("./migrations").run(&state.db).await?;
-    println!("[DB] Success migrate");
+    println!("{} Success migrate", "[DB]".blue());
 
     Ok(())
 }
