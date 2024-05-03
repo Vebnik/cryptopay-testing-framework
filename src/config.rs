@@ -34,7 +34,7 @@ pub struct State {
         Ethereum,
     >,
     pub db: Pool<Postgres>,
-    pub args: Args
+    pub args: Args,
 }
 
 impl Default for Config {

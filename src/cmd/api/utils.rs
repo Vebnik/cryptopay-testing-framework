@@ -68,7 +68,7 @@ pub mod user {
 
     pub async fn check_exist_system_user(state: Arc<State>) -> Result<(), Box<dyn Error>> {
         if state.args.skip {
-            return Ok(())
+            return Ok(());
         }
 
         let res: Result<Uuid, sqlx::Error> = sqlx::query_scalar(

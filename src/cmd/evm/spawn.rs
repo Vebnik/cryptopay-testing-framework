@@ -1,4 +1,8 @@
-use std::{error::Error, process::{exit, Stdio}, sync::Arc};
+use std::{
+    error::Error,
+    process::{exit, Stdio},
+    sync::Arc,
+};
 
 use colored::Colorize;
 use tokio::process::Command;

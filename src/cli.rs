@@ -15,7 +15,7 @@ pub enum EvmCommands {
     Spawn {
         #[arg(default_value = "2")]
         amount: u32,
-    }
+    },
 }
 
 #[derive(Subcommand, Debug, Clone)]
