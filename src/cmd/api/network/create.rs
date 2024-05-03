@@ -1,18 +1,16 @@
 use colored::Colorize;
-use std::error::Error;
 use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
+use std::error::Error;
 
 use crate::config::State;
-
 
 pub async fn exec(
     name: String,
     kind: String,
     endpoint: String,
-    _sate: State
+    _sate: State,
 ) -> Result<(), Box<dyn Error>> {
-
     let body = json!({
         "name": name,
         "kind": kind,
@@ -31,9 +29,17 @@ pub async fn exec(
     match response.status() {
         StatusCode::CREATED => {
             let data = response.json::<Value>().await?;
-            println!("{} Network created: {}", "[API - NETWORK]".blue(), data["id"])
-        },
-        _ => println!("{} Network not created: {}", "[API - NETWORK]".blue(), response.text().await?),
+            println!(
+                "{} Network created: {}",
+                "[API - NETWORK]".blue(),
+                data["id"]
+            )
+        }
+        _ => println!(
+            "{} Network not created: {}",
+            "[API - NETWORK]".blue(),
+            response.text().await?
+        ),
     };
 
     Ok(())

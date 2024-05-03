@@ -3,7 +3,6 @@ use std::{error::Error, process::Stdio};
 use tokio::process::Command;
 
 pub async fn check_exist_db() -> Result<(), Box<dyn Error>> {
-
     let exit_code = Command::new("createdb")
         .arg("-U")
         .arg("postgres")

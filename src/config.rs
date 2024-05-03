@@ -1,36 +1,48 @@
 use std::default::Default;
 
 use alloy::{
-    network::Ethereum,
-    node_bindings::AnvilInstance,
-    providers::{fillers::{ChainIdFiller, FillProvider, GasFiller, JoinFill, NonceFiller}, Identity, RootProvider},
+    network::{Ethereum, EthereumSigner},
+    providers::{
+        fillers::{ChainIdFiller, FillProvider, GasFiller, JoinFill, NonceFiller, SignerFiller},
+        Identity, RootProvider,
+    },
     transports::BoxTransport,
 };
 use sqlx::{Pool, Postgres};
 
 #[derive(Debug, Clone)]
 pub struct Config {
-    pub bsc_network_endpoint: String,
-    pub eth_network_endpoint: String,
-    pub test_network_endpoint: String,
-    pub database_url: String,
+    pub anvil_endpoint: String,
+    pub cryptopay_url: String,
+    pub db_host: String,
+    pub db_connect_url: String,
+    pub core_priv_key: String,
 }
 
 #[derive(Debug)]
 pub struct State {
-    pub anvil: AnvilInstance,
     pub config: Config,
-    pub provider: FillProvider<JoinFill<JoinFill<JoinFill<Identity, GasFiller>, NonceFiller>, ChainIdFiller>, RootProvider<BoxTransport>, BoxTransport, Ethereum>,
+    pub provider: FillProvider<
+        JoinFill<
+            JoinFill<JoinFill<JoinFill<Identity, GasFiller>, NonceFiller>, ChainIdFiller>,
+            SignerFiller<EthereumSigner>,
+        >,
+        RootProvider<BoxTransport>,
+        BoxTransport,
+        Ethereum,
+    >,
     pub db: Pool<Postgres>,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
-            bsc_network_endpoint: "wss://bsc-testnet.nodereal.io/ws/v1/a9ebae1dfb1d47339003ec1724a7dbf2".into(),
-            eth_network_endpoint: "wss://sepolia.infura.io/ws/v3/221ed134273943b2b7bedb4b8377761b".into(),
-            test_network_endpoint: "http://127.0.0.1:8545".into(),
-            database_url: "postgres://postgres:postgres@localhost:5432/test".into(),
+            cryptopay_url: "http://127.0.0.1:9999".into(),
+            anvil_endpoint: "http://127.0.0.1:8545".into(),
+            db_host: "127.0.0.1:5432".into(),
+            db_connect_url: "postgres://postgres:postgres@localhost:5432/test".into(),
+            core_priv_key: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+                .into(),
         }
     }
 }

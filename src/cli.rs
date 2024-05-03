@@ -26,7 +26,6 @@ pub enum NetworkCommands {
     },
 }
 
-
 #[derive(Subcommand, Debug, Clone)]
 pub enum ApiCommands {
     /// Create user -> login -> create wallet ->  with wallet
@@ -34,7 +33,7 @@ pub enum ApiCommands {
     /// Network api scope command
     Network {
         #[command(subcommand)]
-        cmd: NetworkCommands,        
+        cmd: NetworkCommands,
     },
 }
 
@@ -62,7 +61,7 @@ pub enum ProcessType {
     Db {
         #[command(subcommand)]
         cmd: DbCommands,
-    }
+    },
 }
 
 /// CLI Test framework for cryptopay
