@@ -11,6 +11,11 @@ pub enum EvmCommands {
         #[arg(default_value = "100")]
         amount: u32,
     },
+    /// Spawn new local blockchain node
+    Spawn {
+        #[arg(default_value = "2")]
+        amount: u32,
+    }
 }
 
 #[derive(Subcommand, Debug, Clone)]
@@ -45,7 +50,7 @@ pub enum ApiCommands {
     /// Create user -> login -> create wallet ->  with wallet
     User {
         #[command(subcommand)]
-        cmd: UserCommands,        
+        cmd: UserCommands,
     },
     /// Network api scope command
     Network {
@@ -88,4 +93,8 @@ pub struct Args {
     /// Test process type
     #[command(subcommand)]
     pub process: ProcessType,
+
+    #[arg(short)]
+    /// Skip all service check
+    pub skip: bool,
 }

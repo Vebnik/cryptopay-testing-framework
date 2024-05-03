@@ -1,5 +1,7 @@
 use std::default::Default;
 
+use crate::cli::Args;
+
 use alloy::{
     network::{Ethereum, EthereumSigner},
     providers::{
@@ -32,6 +34,7 @@ pub struct State {
         Ethereum,
     >,
     pub db: Pool<Postgres>,
+    pub args: Args
 }
 
 impl Default for Config {

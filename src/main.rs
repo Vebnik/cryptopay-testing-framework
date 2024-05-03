@@ -7,10 +7,11 @@ pub mod utils;
 
 use alloy::{network::EthereumSigner, providers::ProviderBuilder, signers::wallet::LocalWallet};
 use clap::Parser;
+use colored::Colorize;
 use sqlx::postgres::PgPoolOptions;
 use std::{error::Error, sync::Arc};
 
-use cli::{DbCommands, EvmCommands, ProcessType};
+use cli::ProcessType;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -19,8 +20,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let config = config::Config::default();
 
     // start utils
-    utils::check_exist_service(config.clone()).await?;
-    cmd::db::utils::check_exist_db().await?;
+    if !args.skip {
+        utils::check_exist_service(config.clone()).await?;
+        cmd::db::utils::check_exist_db().await?;
+    } else {
+        println!("{} Skip all check", "[SERVICE]".blue());
+    }
 
     // evm provider
     let wallet = config.core_priv_key.parse::<LocalWallet>()?;
@@ -37,6 +42,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
 
     let state = Arc::new(config::State {
+        args: args.clone(),
         config,
         provider,
         db,
@@ -46,20 +52,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     cmd::api::utils::user::check_exist_system_user(Arc::clone(&state)).await?;
 
     match &args.process {
-        ProcessType::Evm { cmd } => match cmd {
-            EvmCommands::Deploy {
-                name,
-                symbol,
-                amount,
-            } => {
-                cmd::evm::deploy::exec(Arc::clone(&state), name.clone(), symbol.clone(), amount.clone()).await?;
-            }
-        },
-        ProcessType::Api { cmd } => cmd::api::handler::exec(cmd.clone(), Arc::clone(&state)).await?,
-        ProcessType::Db { cmd } => match cmd {
-            DbCommands::Drop => cmd::db::drop::exec(Arc::clone(&state)).await?,
-            DbCommands::Create => cmd::db::create::exec(Arc::clone(&state)).await?,
-        },
+        ProcessType::Evm { cmd } => {
+            cmd::evm::handler::exec(cmd.clone(), Arc::clone(&state)).await?
+        }
+        ProcessType::Api { cmd } => {
+            cmd::api::handler::exec(cmd.clone(), Arc::clone(&state)).await?
+        }
+        ProcessType::Db { cmd } => cmd::db::handler::exec(cmd.clone(), Arc::clone(&state)).await?,
     }
 
     Ok(())

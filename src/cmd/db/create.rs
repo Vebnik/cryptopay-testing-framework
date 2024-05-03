@@ -1,5 +1,5 @@
-use std::{error::Error, sync::Arc};
 use colored::Colorize;
+use std::{error::Error, sync::Arc};
 
 use crate::config::State;
 
