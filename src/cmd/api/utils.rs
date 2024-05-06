@@ -50,11 +50,14 @@ pub mod user {
                     exit(0)
                 }
 
-                let token = res.json::<Value>().await?["token"].to_string();
+                let token = res.json::<Value>().await?["token"]
+                    .to_string()
+                    .replace("\"", "");
+
                 println!(
-                    "{} System user token: ({}...)",
+                    "{} System user token: ({} chars)",
                     "[SERVICE]".blue(),
-                    token.clone().split_off(50)
+                    token.len()
                 );
 
                 return Ok(token);
@@ -80,18 +83,26 @@ pub mod user {
         match res {
             Ok(data) => {
                 println!("{} System user exist: ({})", "[SERVICE]".blue(), data);
-                get_system_user_token(state).await?;
+
+                let token = get_system_user_token(state.clone()).await?;
+                *state.system_user_token.borrow_mut() = Some(token);
             }
             Err(err) => {
-                println!("{} System user not exist: {}", "[SERVICE]".blue(), err);
+                println!(
+                    "{} System user not exist, try to create: {}",
+                    "[SERVICE]".blue(),
+                    err
+                );
                 user::create::exec(
-                    state,
+                    state.clone(),
                     "test_system".into(),
                     true,
                     Some("test_system@localhost.com".into()),
                 )
                 .await?;
-                exit(0)
+
+                let token = get_system_user_token(state.clone()).await?;
+                *state.system_user_token.borrow_mut() = Some(token);
             }
         }
 

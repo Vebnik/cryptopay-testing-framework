@@ -12,10 +12,12 @@ contract ERC20 {
     string public symbol;
     uint8 public decimals;
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals) {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _amount) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
+
+        _mint(msg.sender, _amount * 10 ** _decimals);
     }
 
     function transfer(address recipient, uint256 amount)

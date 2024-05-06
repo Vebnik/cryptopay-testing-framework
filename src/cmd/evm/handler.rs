@@ -18,6 +18,9 @@ pub async fn exec(cmd: EvmCommands, state: Arc<State>) -> Result<(), Box<dyn Err
             )
             .await?;
         }
+        EvmCommands::Mint { contract, address, amount } => {
+            evm::mint::exec(Arc::clone(&state), address, contract, amount.clone()).await?;
+        }
         EvmCommands::Spawn { amount } => {
             evm::spawn::exec(Arc::clone(&state), amount.clone()).await?;
         }

@@ -1,4 +1,4 @@
-use std::default::Default;
+use std::{cell::RefCell, default::Default};
 
 use crate::cli::Args;
 
@@ -19,6 +19,7 @@ pub struct Config {
     pub db_host: String,
     pub db_connect_url: String,
     pub core_priv_key: String,
+    pub anvil_nodes: i8,
 }
 
 #[derive(Debug)]
@@ -35,6 +36,7 @@ pub struct State {
     >,
     pub db: Pool<Postgres>,
     pub args: Args,
+    pub system_user_token: RefCell<Option<String>>,
 }
 
 impl Default for Config {
@@ -46,6 +48,25 @@ impl Default for Config {
             db_connect_url: "postgres://postgres:postgres@localhost:5432/test".into(),
             core_priv_key: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
                 .into(),
+            anvil_nodes: 2,
         }
+    }
+}
+
+// impl Config {
+//     fn new(
+//         cryptopay_url: String,
+//         anvil_endpoint: String,
+//         db_host: String,
+//         db_connect_url: String,
+//         core_priv_key: String,
+//     ) -> Self {
+//         todo!("Implement me!")
+//     }
+// }
+
+impl State {
+    pub fn set_user_token(self, token: String) {
+        *self.system_user_token.borrow_mut() = Some(token)
     }
 }

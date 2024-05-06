@@ -15,11 +15,9 @@ pub async fn exec(cmd: ApiCommands, state: Arc<State>) -> Result<(), Box<dyn Err
             }
         },
         ApiCommands::Network { cmd } => match cmd {
-            NetworkCommands::Create {
-                name,
-                kind,
-                endpoint,
-            } => api::network::create::exec(name, kind, endpoint, state).await?,
+            NetworkCommands::Create { name, kind } => {
+                api::network::create::exec(name, kind, state).await?;
+            }
         },
     };
 

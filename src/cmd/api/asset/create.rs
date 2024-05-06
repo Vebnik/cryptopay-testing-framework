@@ -8,17 +8,23 @@ use crate::config::State;
 pub async fn exec(
     state: Arc<State>,
     network_id: String,
-    password: String,
+    name: String,
+    symbol: String,
+    address: String,
 ) -> Result<(), Box<dyn Error>> {
     let user_token = state.system_user_token.clone().take().unwrap();
 
     let body = json!({
         "networkId": network_id,
-        "password": password
+        "name": name,
+        "symbol": symbol,
+        "address": address,
+        "decimals": 18,
+        "minWithdrawal": 500000000
     });
 
     let response = reqwest::Client::new()
-        .post("http://localhost:9999/v1/wallet/create")
+        .post("http://localhost:9999/v1/asset/create")
         .header("Content-Type", "application/json")
         .header("x-auth-token", user_token.clone())
         .body(body.to_string())
@@ -28,23 +34,20 @@ pub async fn exec(
     match response {
         Ok(res) => match res.status() {
             StatusCode::CREATED => {
-                let wallet = res.json::<Value>().await?;
-                println!(
-                    "{} Wallet created: {}",
-                    "[API - WALLET]".blue(),
-                    wallet["id"]
-                );
+                let asset = res.json::<Value>().await?;
+
+                println!("{} Asset created: {}", "[API - ASSET]".blue(), asset["id"]);
             }
             _ => {
                 println!(
-                    "{} Wallet not created: {}",
-                    "[API - WALLET]".blue(),
+                    "{} Asset not created: {}",
+                    "[API - ASSET]".blue(),
                     res.status()
                 );
             }
         },
         Err(err) => {
-            println!("{} Wallet not created: {}", "[API - WALLET]".blue(), err)
+            println!("{} Asset not created: {}", "[API - ASSET]".blue(), err)
         }
     };
 

@@ -23,6 +23,8 @@ pub async fn exec<'a>(_state: Arc<State>, amount_nodes: u32) -> Result<(), Box<d
         let mut cmd = Command::new("anvil")
             .arg("-p")
             .arg(port.to_string())
+            .arg("-a")
+            .arg("1")
             .stdout(Stdio::null())
             .spawn()
             .unwrap();

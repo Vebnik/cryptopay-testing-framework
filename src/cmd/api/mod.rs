@@ -1,3 +1,4 @@
+pub mod asset;
 pub mod handler;
 pub mod network;
 pub mod user;

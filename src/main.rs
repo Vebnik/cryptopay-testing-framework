@@ -9,7 +9,7 @@ use alloy::{network::EthereumSigner, providers::ProviderBuilder, signers::wallet
 use clap::Parser;
 use colored::Colorize;
 use sqlx::postgres::PgPoolOptions;
-use std::{error::Error, sync::Arc};
+use std::{cell::RefCell, error::Error, sync::Arc};
 
 use cli::ProcessType;
 
@@ -46,6 +46,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         config,
         provider,
         db,
+        system_user_token: RefCell::new(None),
     });
 
     // other cheks
@@ -57,6 +58,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         ProcessType::Api { cmd } => {
             cmd::api::handler::exec(cmd.clone(), Arc::clone(&state)).await?
+        }
+        ProcessType::Service { cmd } => {
+            cmd::service::handler::exec(cmd.clone(), Arc::clone(&state)).await?
         }
         ProcessType::Db { cmd } => cmd::db::handler::exec(cmd.clone(), Arc::clone(&state)).await?,
     }

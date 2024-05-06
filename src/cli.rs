@@ -11,6 +11,15 @@ pub enum EvmCommands {
         #[arg(default_value = "100")]
         amount: u32,
     },
+    /// Mint token for address
+    Mint {
+        /// Contract address
+        contract: String,
+        /// Target address
+        address: String,
+        #[arg(default_value = "100")]
+        amount: u32,
+    },
     /// Spawn new local blockchain node
     Spawn {
         #[arg(default_value = "2")]
@@ -26,8 +35,6 @@ pub enum NetworkCommands {
         name: String,
         #[arg(default_value = "EVM")]
         kind: String,
-        #[arg(default_value = "ws://127.0.0.1:8545")]
-        endpoint: String,
     },
 }
 
@@ -68,6 +75,13 @@ pub enum DbCommands {
 }
 
 #[derive(Subcommand, Debug, Clone)]
+pub enum ServiceCommands {
+    /// Exec full flow
+    /// Create user -> network -> deploy contract > create asset -> Create wallet
+    Full,
+}
+
+#[derive(Subcommand, Debug, Clone)]
 pub enum ProcessType {
     /// EVM scope command
     Evm {
@@ -83,6 +97,10 @@ pub enum ProcessType {
     Db {
         #[command(subcommand)]
         cmd: DbCommands,
+    },
+    Service {
+        #[command(subcommand)]
+        cmd: ServiceCommands,
     },
 }
 
