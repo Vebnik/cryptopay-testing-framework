@@ -1,9 +1,9 @@
 use std::error::Error;
 use std::sync::Arc;
 
-use crate::{cli::EvmCommands, cmd::evm, config::State};
+use crate::{cli::EvmCommands, cmd::evm, config::Config};
 
-pub async fn exec(cmd: EvmCommands, state: Arc<State>) -> Result<(), Box<dyn Error>> {
+pub async fn exec(cmd: EvmCommands, config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     match cmd {
         EvmCommands::Deploy {
             name,
@@ -11,18 +11,22 @@ pub async fn exec(cmd: EvmCommands, state: Arc<State>) -> Result<(), Box<dyn Err
             amount,
         } => {
             evm::deploy::exec(
-                Arc::clone(&state),
+                Arc::clone(&config),
                 name.clone(),
                 symbol.clone(),
                 amount.clone(),
             )
             .await?;
         }
-        EvmCommands::Mint { contract, address, amount } => {
-            evm::mint::exec(Arc::clone(&state), address, contract, amount.clone()).await?;
+        EvmCommands::Mint {
+            contract,
+            address,
+            amount,
+        } => {
+            evm::mint::exec(Arc::clone(&config), address, contract, amount.clone()).await?;
         }
         EvmCommands::Spawn { amount } => {
-            evm::spawn::exec(Arc::clone(&state), amount.clone()).await?;
+            evm::spawn::exec(Arc::clone(&config), amount.clone()).await?;
         }
     }
 

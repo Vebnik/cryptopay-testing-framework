@@ -21,19 +21,21 @@ pub mod user {
     use colored::Colorize;
     use serde_json::{json, Value};
     use sqlx::types::Uuid;
-    use std::{error::Error, process::exit, sync::Arc};
+    use std::sync::Arc;
+    use std::{error::Error, process::exit};
 
     use crate::cmd::api::user;
-    use crate::config::State;
+    use crate::config::Config;
+    use crate::utils;
 
-    pub async fn get_system_user_token(state: Arc<State>) -> Result<String, Box<dyn Error>> {
+    pub async fn get_system_user_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
         let body = json!({
             "email": "test_system@localhost.com",
             "password": "test1234"
         });
 
         let response = reqwest::Client::new()
-            .post(format!("{}/v1/user/login", state.config.cryptopay_url))
+            .post(format!("{}/v1/user/login", config.cryptopay_url))
             .header("Content-Type", "application/json")
             .body(body.to_string())
             .send()
@@ -69,23 +71,18 @@ pub mod user {
         }
     }
 
-    pub async fn check_exist_system_user(state: Arc<State>) -> Result<(), Box<dyn Error>> {
-        if state.args.skip {
-            return Ok(());
-        }
+    pub async fn check_exist_system_user(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+        let db = utils::get_db(Arc::clone(&config)).await?;
 
         let res: Result<Uuid, sqlx::Error> = sqlx::query_scalar(
             r#"select id from "user" where email = 'test_system@localhost.com'"#,
         )
-        .fetch_one(&state.db)
+        .fetch_one(&db)
         .await;
 
         match res {
             Ok(data) => {
                 println!("{} System user exist: ({})", "[SERVICE]".blue(), data);
-
-                let token = get_system_user_token(state.clone()).await?;
-                *state.system_user_token.borrow_mut() = Some(token);
             }
             Err(err) => {
                 println!(
@@ -93,16 +90,18 @@ pub mod user {
                     "[SERVICE]".blue(),
                     err
                 );
+
                 user::create::exec(
-                    state.clone(),
+                    Arc::clone(&config),
                     "test_system".into(),
                     true,
                     Some("test_system@localhost.com".into()),
                 )
                 .await?;
 
-                let token = get_system_user_token(state.clone()).await?;
-                *state.system_user_token.borrow_mut() = Some(token);
+                println!("{} System user created", "[SERVICE]".blue());
+                // let token = get_system_user_token(Arc::clone(&config)).await?;
+                // *state.system_user_token.borrow_mut() = Some(token);
             }
         }
 

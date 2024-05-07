@@ -8,7 +8,7 @@ use alloy::{
 use colored::Colorize;
 use std::{error::Error, sync::Arc};
 
-use crate::config::State;
+use crate::config::Config;
 
 sol! {
     #[allow(missing_docs)]
@@ -18,17 +18,16 @@ sol! {
 }
 
 pub async fn exec(
-    state: Arc<State>,
+    config: Arc<Config>,
     name: String,
     symbol: String,
     amount: u32,
 ) -> Result<Vec<String>, Box<dyn Error>> {
-    let wallet = state.config.core_priv_key.parse::<LocalWallet>()?;
+    let wallet = config.core_priv_key.parse::<LocalWallet>()?;
 
-    let mut contracts_addresses: Vec<String> =
-        Vec::with_capacity(state.config.anvil_nodes as usize);
+    let mut contracts_addresses: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
 
-    for port in 8545..(8545 + state.config.anvil_nodes as i32) {
+    for port in 8545..(8545 + config.anvil_nodes as i32) {
         let provide = ProviderBuilder::new()
             .with_recommended_fillers()
             .signer(EthereumSigner::from(wallet.clone()))

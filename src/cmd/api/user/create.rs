@@ -5,16 +5,19 @@ use serde_json::json;
 use std::error::Error;
 use std::sync::Arc;
 
-use crate::cmd::api::utils;
-use crate::config::State;
+use crate::cmd::api::utils::password;
+use crate::config::Config;
+use crate::utils;
 
 async fn admin_flow(
-    state: Arc<State>,
+    config: Arc<Config>,
     name: String,
     email: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
+    let db = utils::get_db(Arc::clone(&config)).await?;
+
     let fee = BigDecimal::from_u32(2).expect("valid");
-    let encrypted = utils::password::hash("test1234").await?;
+    let encrypted = password::hash("test1234").await?;
     let email = email.unwrap_or(format!("test_{}@localhost.com", rand::random::<u32>()));
 
     let query = format!(
@@ -26,7 +29,7 @@ async fn admin_flow(
         name, email, encrypted, fee, "EUR", true,
     );
 
-    let result = sqlx::raw_sql(&query).execute(&state.db).await;
+    let result = sqlx::raw_sql(&query).execute(&db).await;
 
     match result {
         Ok(_raw) => {
@@ -44,7 +47,7 @@ async fn admin_flow(
 }
 
 async fn user_flow(
-    _state: Arc<State>,
+    _state: Arc<Config>,
     name: String,
     email: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
@@ -89,15 +92,15 @@ async fn user_flow(
 }
 
 pub async fn exec(
-    state: Arc<State>,
+    config: Arc<Config>,
     name: String,
     is_admin: bool,
     email: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     if is_admin {
-        admin_flow(Arc::clone(&state), name, email).await?
+        admin_flow(Arc::clone(&config), name, email).await?
     } else {
-        user_flow(Arc::clone(&state), name, email).await?
+        user_flow(Arc::clone(&config), name, email).await?
     }
 
     Ok(())

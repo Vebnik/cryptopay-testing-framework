@@ -3,18 +3,17 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::{error::Error, sync::Arc};
 
-use crate::config::State;
+use crate::{cmd::api::utils::user::get_system_user_token, config::Config};
 
 pub async fn exec(
+    config: Arc<Config>,
     name: String,
     kind: String,
-    state: Arc<State>,
 ) -> Result<Vec<String>, Box<dyn Error>> {
-    let user_token = state.system_user_token.clone().take().unwrap();
+    let user_token = get_system_user_token(Arc::clone(&config)).await?;
+    let mut networks_id: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
 
-    let mut networks_id: Vec<String> = Vec::with_capacity(state.config.anvil_nodes as usize);
-
-    for port in 8545..(8545 + state.config.anvil_nodes as i32) {
+    for port in 8545..(8545 + config.anvil_nodes as i32) {
         let body = json!({
             "name": format!("{name}_{}", port),
             "kind": kind,

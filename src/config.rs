@@ -2,6 +2,16 @@ use std::{cell::RefCell, default::Default};
 
 use crate::cli::Args;
 
+pub type ProviderType = FillProvider<
+    JoinFill<
+        JoinFill<JoinFill<JoinFill<Identity, GasFiller>, NonceFiller>, ChainIdFiller>,
+        SignerFiller<EthereumSigner>,
+    >,
+    RootProvider<BoxTransport>,
+    BoxTransport,
+    Ethereum,
+>;
+
 use alloy::{
     network::{Ethereum, EthereumSigner},
     providers::{
@@ -25,15 +35,7 @@ pub struct Config {
 #[derive(Debug)]
 pub struct State {
     pub config: Config,
-    pub provider: FillProvider<
-        JoinFill<
-            JoinFill<JoinFill<JoinFill<Identity, GasFiller>, NonceFiller>, ChainIdFiller>,
-            SignerFiller<EthereumSigner>,
-        >,
-        RootProvider<BoxTransport>,
-        BoxTransport,
-        Ethereum,
-    >,
+    pub provider: ProviderType,
     pub db: Pool<Postgres>,
     pub args: Args,
     pub system_user_token: RefCell<Option<String>>,

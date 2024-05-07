@@ -4,19 +4,19 @@ use std::sync::Arc;
 use crate::{
     cli::{ApiCommands, NetworkCommands, UserCommands},
     cmd::api,
-    config::State,
+    config::Config,
 };
 
-pub async fn exec(cmd: ApiCommands, state: Arc<State>) -> Result<(), Box<dyn Error>> {
+pub async fn exec(cmd: ApiCommands, config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     match cmd {
         ApiCommands::User { cmd } => match cmd {
             UserCommands::Create { name, admin, email } => {
-                api::user::create::exec(state, name, admin, email).await?;
+                api::user::create::exec(Arc::clone(&config), name, admin, email).await?;
             }
         },
         ApiCommands::Network { cmd } => match cmd {
             NetworkCommands::Create { name, kind } => {
-                api::network::create::exec(name, kind, state).await?;
+                api::network::create::exec(Arc::clone(&config), name, kind).await?;
             }
         },
     };

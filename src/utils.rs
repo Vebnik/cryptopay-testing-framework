@@ -1,10 +1,12 @@
+use alloy::{network::EthereumSigner, providers::ProviderBuilder, signers::wallet::LocalWallet};
 use colored::Colorize;
-use std::{error::Error, process::exit};
+use sqlx::postgres::PgPoolOptions;
+use std::{error::Error, process::exit, sync::Arc};
 use tokio::net::TcpStream;
 
-use crate::config::Config;
+use crate::config::{Config, ProviderType};
 
-pub async fn check_exist_service(config: Config) -> Result<(), Box<dyn Error>> {
+pub async fn check_exist_service(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     let mut errors: Vec<i8> = Vec::with_capacity(3);
 
     // anvil
@@ -30,7 +32,7 @@ pub async fn check_exist_service(config: Config) -> Result<(), Box<dyn Error>> {
     };
 
     // postgres
-    let stream = TcpStream::connect(config.db_host).await;
+    let stream = TcpStream::connect(config.db_host.clone()).await;
     match stream {
         Ok(_) => println!("{} Postgres -> {}", "[HEALTH]".blue(), "OK".green()),
         Err(err) => {
@@ -44,4 +46,25 @@ pub async fn check_exist_service(config: Config) -> Result<(), Box<dyn Error>> {
     }
 
     Ok(())
+}
+
+pub async fn get_provider(config: Arc<Config>) -> Result<ProviderType, Box<dyn Error>> {
+    let wallet = config.core_priv_key.parse::<LocalWallet>()?;
+
+    let provider = ProviderBuilder::new()
+        .with_recommended_fillers()
+        .signer(EthereumSigner::from(wallet.clone()))
+        .on_builtin(&config.anvil_endpoint)
+        .await?;
+
+    Ok(provider)
+}
+
+pub async fn get_db(config: Arc<Config>) -> Result<sqlx::Pool<sqlx::Postgres>, Box<dyn Error>> {
+    let db = PgPoolOptions::new()
+        .max_connections(20)
+        .connect(&config.db_connect_url)
+        .await?;
+
+    Ok(db)
 }

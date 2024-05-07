@@ -3,14 +3,14 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::{error::Error, sync::Arc};
 
-use crate::config::State;
+use crate::{cmd::api::utils::user::get_system_user_token, config::Config};
 
 pub async fn exec(
-    state: Arc<State>,
+    config: Arc<Config>,
     network_id: String,
     password: String,
 ) -> Result<(), Box<dyn Error>> {
-    let user_token = state.system_user_token.clone().take().unwrap();
+    let user_token = get_system_user_token(Arc::clone(&config)).await?;
 
     let body = json!({
         "networkId": network_id,

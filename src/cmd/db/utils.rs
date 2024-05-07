@@ -1,23 +1,33 @@
 use colored::Colorize;
-use std::{error::Error, process::Stdio};
-use tokio::process::Command;
+use sqlx::migrate::MigrateDatabase;
+use std::{error::Error, sync::Arc};
 
-pub async fn check_exist_db() -> Result<(), Box<dyn Error>> {
-    let exit_code = Command::new("createdb")
-        .arg("-U")
-        .arg("postgres")
-        .arg("test")
-        .stderr(Stdio::null())
-        .spawn()
-        .expect("Error in check exist db")
-        .wait()
-        .await?;
+// use crate::{config::Config, utils};
+use crate::config::Config;
 
-    match exit_code.code().unwrap() {
-        0 => println!("{} Success create database", "[DB]".blue()),
-        1 => println!("{} Database exist", "[DB]".blue()),
-        _ => println!("{} Not normal status code", "[DB]".blue()),
-    };
+pub async fn check_exist_db(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+    let is_exist = sqlx::Postgres::database_exists(&config.db_connect_url)
+        .await
+        .expect("Error in check exist db");
+
+    match is_exist {
+        false => {
+            println!("{} Database not exist, try to create", "[DB]".blue());
+            sqlx::Postgres::create_database(&config.db_connect_url).await?;
+            println!("{} Success create database", "[DB]".blue());
+
+            // println!("{} Try to migrate", "[DB]".blue());
+            // let db = utils::get_db(Arc::clone(&config)).await?;
+            // sqlx::migrate!("./migrations").run(&db).await?;
+            // println!("{} Success migrated", "[DB]".blue());
+
+            // @TODO maybe overhead
+            // drop(db)
+        }
+        true => {
+            println!("{} Database exist", "[DB]".blue())
+        }
+    }
 
     Ok(())
 }
