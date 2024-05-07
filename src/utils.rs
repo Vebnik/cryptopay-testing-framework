@@ -68,3 +68,7 @@ pub async fn get_db(config: Arc<Config>) -> Result<sqlx::Pool<sqlx::Postgres>, B
 
     Ok(db)
 }
+
+pub async fn get_config() -> Result<Arc<Config>, Box<dyn Error>> {
+    Ok(Arc::new(Config::default()))
+}

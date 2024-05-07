@@ -9,7 +9,7 @@ pub async fn exec(
     config: Arc<Config>,
     network_id: String,
     password: String,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<String, Box<dyn Error>> {
     let user_token = get_system_user_token(Arc::clone(&config)).await?;
 
     let body = json!({
@@ -34,6 +34,8 @@ pub async fn exec(
                     "[API - WALLET]".blue(),
                     wallet["id"]
                 );
+
+                return Ok(wallet["id"].to_string().replace("\"", ""));
             }
             _ => {
                 println!(
@@ -48,5 +50,5 @@ pub async fn exec(
         }
     };
 
-    Ok(())
+    Ok("None".into())
 }

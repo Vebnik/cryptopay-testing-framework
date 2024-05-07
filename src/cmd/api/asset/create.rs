@@ -11,7 +11,7 @@ pub async fn exec(
     name: String,
     symbol: String,
     address: String,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<String, Box<dyn Error>> {
     let user_token = get_system_user_token(Arc::clone(&config)).await?;
 
     let body = json!({
@@ -37,6 +37,8 @@ pub async fn exec(
                 let asset = res.json::<Value>().await?;
 
                 println!("{} Asset created: {}", "[API - ASSET]".blue(), asset["id"]);
+
+                return Ok(asset["id"].to_string().replace("\"", ""));
             }
             _ => {
                 println!(
@@ -51,5 +53,5 @@ pub async fn exec(
         }
     };
 
-    Ok(())
+    Ok("None".into())
 }

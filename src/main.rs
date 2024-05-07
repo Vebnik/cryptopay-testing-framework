@@ -9,6 +9,7 @@ pub mod utils;
 use clap::Parser;
 use colored::Colorize;
 use std::{error::Error, sync::Arc};
+use utils::get_config;
 
 use cli::ProcessType;
 
@@ -16,7 +17,7 @@ use cli::ProcessType;
 async fn main() -> Result<(), Box<dyn Error>> {
     // init data
     let args = cli::Args::parse();
-    let config = Arc::new(config::Config::default());
+    let config = get_config().await?;
 
     // start utils
     if !args.skip {

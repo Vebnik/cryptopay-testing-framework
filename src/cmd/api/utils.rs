@@ -28,6 +28,42 @@ pub mod user {
     use crate::config::Config;
     use crate::utils;
 
+    pub async fn get_system_user_id(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+        let token = get_system_user_token(Arc::clone(&config)).await?;
+
+        let response = reqwest::Client::new()
+            .get(format!("{}/v1/user/me", config.cryptopay_url))
+            .header("x-auth-token", token.clone())
+            .header("Content-Type", "application/json")
+            .send()
+            .await;
+
+        match response {
+            Ok(res) => {
+                if res.status().as_u16() > 201u16 {
+                    println!(
+                        "{} System user info error: ({})",
+                        "[SERVICE]".blue(),
+                        res.text().await?
+                    );
+                    exit(0)
+                }
+
+                let id = res.json::<Value>().await?["id"]
+                    .to_string()
+                    .replace("\"", "");
+
+                println!("{} System user id: ({})", "[SERVICE]".blue(), id);
+
+                return Ok(id);
+            }
+            Err(err) => {
+                println!("{} System user token error: ({})", "[SERVICE]".blue(), err);
+                exit(0)
+            }
+        }
+    }
+
     pub async fn get_system_user_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
         let body = json!({
             "email": "test_system@localhost.com",
@@ -66,6 +102,45 @@ pub mod user {
             }
             Err(err) => {
                 println!("{} System user token error: ({})", "[SERVICE]".blue(), err);
+                exit(0)
+            }
+        }
+    }
+
+    pub async fn get_user_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+        let body = json!({
+            "email": "test_user@localhost.com",
+            "password": "test1234test"
+        });
+
+        let response = reqwest::Client::new()
+            .post(format!("{}/v1/user/login", config.cryptopay_url))
+            .header("Content-Type", "application/json")
+            .body(body.to_string())
+            .send()
+            .await;
+
+        match response {
+            Ok(res) => {
+                if res.status().as_u16() > 201u16 {
+                    println!(
+                        "{} User token error: ({})",
+                        "[SERVICE]".blue(),
+                        res.text().await?
+                    );
+                    exit(0)
+                }
+
+                let token = res.json::<Value>().await?["token"]
+                    .to_string()
+                    .replace("\"", "");
+
+                println!("{} User token: ({} chars)", "[SERVICE]".blue(), token.len());
+
+                return Ok(token);
+            }
+            Err(err) => {
+                println!("{} User token error: ({})", "[SERVICE]".blue(), err);
                 exit(0)
             }
         }

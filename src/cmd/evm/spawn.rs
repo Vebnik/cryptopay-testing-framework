@@ -24,7 +24,7 @@ pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<(), Box
             .arg("-p")
             .arg(port.to_string())
             .arg("-a")
-            .arg("1")
+            .arg("2")
             .stdout(Stdio::null())
             .spawn()
             .unwrap();

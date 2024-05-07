@@ -98,6 +98,7 @@ pub enum ProcessType {
         #[command(subcommand)]
         cmd: DbCommands,
     },
+    /// Run all service logic for create, deploy and etc
     Service {
         #[command(subcommand)]
         cmd: ServiceCommands,
