@@ -30,12 +30,13 @@ pub async fn exec(
             StatusCode::CREATED => {
                 let wallet = res.json::<Value>().await?;
                 println!(
-                    "{} Wallet created: {}",
+                    "{} Wallet created: {} ({})",
                     "[API - WALLET]".blue(),
-                    wallet["id"]
+                    wallet["id"],
+                    wallet["address"]
                 );
 
-                return Ok(wallet["id"].to_string().replace("\"", ""));
+                return Ok(wallet["address"].to_string().replace("\"", ""));
             }
             _ => {
                 println!(

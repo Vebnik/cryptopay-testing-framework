@@ -11,3 +11,22 @@ pub async fn exist_db_test() {
 
     assert!(true)
 }
+
+#[tokio::test]
+pub async fn stdin_await_test() {
+    use colored::Colorize;
+    use std::io;
+
+    let mut confirm = String::new();
+
+    println!(
+        "{} Await for restart cryptopay ... (press enter)",
+        "[SERVICE]".blue()
+    );
+
+    io::stdin().read_line(&mut confirm).unwrap();
+
+    println!("{} Restarted ...", "[SERVICE]".blue());
+
+    assert!(true)
+}
