@@ -1,13 +1,11 @@
 use alloy::{
     primitives::{Address, U256},
-    providers::RootProvider,
     sol,
-    transports::BoxTransport,
 };
 use colored::Colorize;
-use std::{error::Error, sync::Arc};
+use std::{error::Error, str::FromStr, sync::Arc};
 
-use crate::config::Config;
+use crate::config::{Config, ProviderType};
 
 sol! {
     #[allow(missing_docs)]
@@ -22,19 +20,21 @@ pub async fn exec(
     sender: String,
     contract: String,
     amount: u32,
-    provider: RootProvider<BoxTransport>,
+    provider: ProviderType,
 ) -> Result<(), Box<dyn Error>> {
-    let recipient = Address::parse_checksummed(recipient, Some(31337))?;
-    let sender = Address::parse_checksummed(sender, Some(31337))?;
-    let contract = Address::parse_checksummed(contract, Some(31337))?;
+    let recipient = Address::from_str(&recipient)?;
+    let contract = Address::from_str(&contract)?;
+    let sender = Address::from_str(&sender)?;
 
     let decimals = U256::from(10).checked_pow(U256::from(18)).unwrap();
-
-    let contract = ERC20::new(contract, provider);
     let amount = U256::from(amount).checked_mul(decimals).unwrap();
 
+    let contract = ERC20::new(contract, provider);
+
+    println!("{}", amount);
+
     let receipt = contract
-        .transferFrom(sender, recipient, amount)
+        .transfer(recipient, amount)
         .send()
         .await?
         .get_receipt()

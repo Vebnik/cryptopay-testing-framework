@@ -10,6 +10,7 @@ pub async fn exec(
     network_id: String,
     asset_id: String,
     sender: String,
+    amount: i32,
 ) -> Result<String, Box<dyn Error>> {
     let user_id = get_system_user_id(Arc::clone(&config)).await?;
 
@@ -18,7 +19,7 @@ pub async fn exec(
         "networkId": network_id,
         "assetId": asset_id,
         "sender": sender,
-        "amount": 100.to_string()
+        "amount": amount.to_string()
     });
 
     let response = reqwest::Client::new()

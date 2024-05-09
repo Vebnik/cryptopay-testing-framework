@@ -6,7 +6,7 @@ use alloy::{
     sol,
 };
 use colored::Colorize;
-use std::{error::Error, sync::Arc};
+use std::{error::Error, str::FromStr, sync::Arc};
 
 use crate::config::Config;
 
@@ -24,8 +24,8 @@ pub async fn exec(
     amount: u32,
 ) -> Result<(), Box<dyn Error>> {
     let wallet = config.core_priv_key.parse::<LocalWallet>()?;
-    let contract_addr = Address::parse_checksummed(contract, None)?;
-    let target_addr = Address::parse_checksummed(address, None)?;
+    let contract_addr = Address::from_str(&contract)?;
+    let target_addr = Address::from_str(&address)?;
     let decimals = U256::from(10).checked_pow(U256::from(18)).unwrap();
 
     for port in 8545..(8545 + config.anvil_nodes as i32) {
