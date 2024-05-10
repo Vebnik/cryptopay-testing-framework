@@ -23,6 +23,8 @@ pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<(), Box
         let mut cmd = Command::new("anvil")
             .arg("-p")
             .arg(port.to_string())
+            // .arg("--auto-impersonate")
+            // .arg("--prune-history")
             .stdout(Stdio::null())
             .spawn()
             .unwrap();

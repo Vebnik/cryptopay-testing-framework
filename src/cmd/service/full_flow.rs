@@ -1,12 +1,11 @@
 use std::{error::Error, sync::Arc};
 
-use alloy::network::EthereumSigner;
-use alloy::providers::ProviderBuilder;
 use alloy::signers::wallet::LocalWallet;
 use colored::Colorize;
+use ethers::providers::{Provider, Ws};
 use std::io;
 
-use crate::config::{Config, ProviderType, TEST_WALLETS};
+use crate::config::{Config, TEST_WALLETS};
 use crate::{
     cmd, cmd::api::asset, cmd::api::intent, cmd::api::network, cmd::api::user, cmd::api::utils,
     cmd::api::wallet, cmd::evm::deploy, cmd::evm::mint, cmd::evm::transfer,
@@ -28,7 +27,7 @@ pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     let test_wallet_pass = "test1234test";
 
     // Test config
-    let wallets_count: usize = 1;
+    let wallets_count: usize = 9;
 
     let mut wallets: Vec<String> = Vec::new();
     let mut assets_networks: Vec<NetworkAsset> = Vec::new();
@@ -127,28 +126,22 @@ pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
         println!(
             "{} On anvil: {}",
             "[DUBUG]".yellow(),
-            format!("http://localhost:{}", port)
+            format!("ws://localhost:{port}")
         );
+
+        let provider = Provider::<Ws>::connect(format!("ws://127.0.0.1:{port}"))
+            .await
+            .unwrap();
 
         // for wallet on each network -> anvil nodes
         // for test wallet on each anvil nodes
-        for (address, key) in TEST_WALLETS[0..wallets_count].iter() {
-            // crate wallet for wallet anvil nodes
-            let test_wallet = key.parse::<LocalWallet>()?;
-
-            // crate provider for wallet anvil nodes
-            let provider: ProviderType = ProviderBuilder::new()
-                .with_recommended_fillers()
-                .signer(EthereumSigner::from(test_wallet))
-                .on_builtin(&format!("http://localhost:{}", port))
-                .await?;
-
-            transfer::exec(
+        for (_address, key) in TEST_WALLETS[0..wallets_count].iter() {
+            transfer::exec_ethers(
                 Arc::clone(&config),
                 wallets[i].clone(),
-                address.to_string(),
+                key.to_string(),
                 contracts[0].clone(),
-                420,
+                500,
                 provider.clone(),
             )
             .await?;

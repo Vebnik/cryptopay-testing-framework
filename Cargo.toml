@@ -30,6 +30,12 @@ features = [
     "transports"
 ]
 
+[dependencies.ethers]
+version = "2.0.14"
+features = [
+    "ws"
+]
+
 [dependencies.sqlx]
 version = "0.7.4"
 features = [
