@@ -12,21 +12,20 @@ use crate::utils;
 async fn admin_flow(
     config: Arc<Config>,
     name: String,
-    email: Option<String>,
+    email: String,
 ) -> Result<(), Box<dyn Error>> {
     let db = utils::get_db(Arc::clone(&config)).await?;
 
     let fee = BigDecimal::from_u32(2).expect("valid");
     let encrypted = password::hash("test1234").await?;
-    let email = email.unwrap_or(format!("test_{}@localhost.com", rand::random::<u32>()));
 
     let query = format!(
         r#"
         INSERT INTO "user" ("name", "email", "password", "fee", "currency", "is_admin", "is_verified", "email_token")
-        VALUES ('{}', '{}', '{}', {}, '{}', {}, true, null)
+        VALUES ('{}', '{}', '{}', {}, '{}', true, true, null)
         RETURNING id
         "#,
-        name, email, encrypted, fee, "EUR", true,
+        name, email, encrypted, fee, "EUR"
     );
 
     let result = sqlx::raw_sql(&query).execute(&db).await;
@@ -49,14 +48,14 @@ async fn admin_flow(
 async fn user_flow(
     _state: Arc<Config>,
     name: String,
-    email: Option<String>,
+    email: String,
 ) -> Result<(), Box<dyn Error>> {
-    let email = email.unwrap_or(format!("test_{}@localhost.com", rand::random::<u32>()));
+    let password = "test1234";
 
     let body = json!({
         "name": name,
         "email": email,
-        "password": "test1234",
+        "password": password,
         "currency": "EUR"
     });
 
@@ -71,7 +70,7 @@ async fn user_flow(
         Ok(res) => match res.status() {
             StatusCode::CREATED => {
                 println!(
-                    "{} User created: (email: {email}, password: test1234)",
+                    "{} User created: (email: {email}, password: {password})",
                     "[API - USER]".blue(),
                 );
             }
@@ -95,7 +94,7 @@ pub async fn exec(
     config: Arc<Config>,
     name: String,
     is_admin: bool,
-    email: Option<String>,
+    email: String,
 ) -> Result<(), Box<dyn Error>> {
     if is_admin {
         admin_flow(Arc::clone(&config), name, email).await?

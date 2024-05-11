@@ -3,7 +3,7 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::{error::Error, sync::Arc};
 
-use crate::{cmd::api::utils::user::get_system_user_id, config::Config};
+use crate::{cmd::api::utils::user::get_admin_user_id, config::Config};
 
 pub async fn exec(
     config: Arc<Config>,
@@ -12,7 +12,7 @@ pub async fn exec(
     sender: String,
     amount: i32,
 ) -> Result<String, Box<dyn Error>> {
-    let user_id = get_system_user_id(Arc::clone(&config)).await?;
+    let user_id = get_admin_user_id(Arc::clone(&config)).await?;
 
     let body = json!({
         "userId": user_id,

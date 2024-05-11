@@ -11,7 +11,7 @@ use crate::{
 pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     check_exist_db(Arc::clone(&config)).await?;
 
-    println!("{} Try to drop", "[DB]".blue());
+    println!("{} Dropping the database", "[DB]".blue());
 
     let db = utils::get_db(Arc::clone(&config)).await?;
 
@@ -26,7 +26,7 @@ pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
 
     match result {
         Ok(_) => {
-            println!("{} Success drop", "[DB]".blue());
+            println!("{} Successfully dropped", "[DB]".blue());
             cmd::db::create::exec(Arc::clone(&config)).await?;
         }
         Err(err) => println!("{} Error in drop: {}", "[DB]".blue(), err.to_string().red()),

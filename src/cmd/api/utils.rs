@@ -28,8 +28,8 @@ pub mod user {
     use crate::config::Config;
     use crate::utils;
 
-    pub async fn get_system_user_id(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
-        let token = get_system_user_token(Arc::clone(&config)).await?;
+    pub async fn get_admin_user_id(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+        let token = get_admin_token(Arc::clone(&config)).await?;
 
         let response = reqwest::Client::new()
             .get(format!("{}/v1/user/me", config.cryptopay_url))
@@ -64,9 +64,9 @@ pub mod user {
         }
     }
 
-    pub async fn get_system_user_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+    pub async fn get_admin_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
         let body = json!({
-            "email": "test_system@localhost.com",
+            "email": "admin@cryptopay.wtf",
             "password": "test1234"
         });
 
@@ -109,8 +109,8 @@ pub mod user {
 
     pub async fn get_user_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
         let body = json!({
-            "email": "test_user@localhost.com",
-            "password": "test1234test"
+            "email": "test@cryptopay.wtf",
+            "password": "test1234"
         });
 
         let response = reqwest::Client::new()
@@ -146,36 +146,35 @@ pub mod user {
         }
     }
 
-    pub async fn check_exist_system_user(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+    pub async fn check_admin_exists(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
         let db = utils::get_db(Arc::clone(&config)).await?;
 
-        let res: Result<Uuid, sqlx::Error> = sqlx::query_scalar(
-            r#"select id from "user" where email = 'test_system@localhost.com'"#,
-        )
-        .fetch_one(&db)
-        .await;
+        let res: Result<Uuid, sqlx::Error> =
+            sqlx::query_scalar(r#"select id from "user" where email = 'admin@cryptopay.wtf'"#)
+                .fetch_one(&db)
+                .await;
 
         match res {
             Ok(data) => {
-                println!("{} System user exist: ({})", "[SERVICE]".blue(), data);
+                println!("{} Admin user exists: ({})", "[SERVICE]".blue(), data);
             }
             Err(err) => {
                 println!(
-                    "{} System user not exist, try to create: {}",
+                    "{} Admin user does not exist, creating: {}",
                     "[SERVICE]".blue(),
                     err
                 );
 
                 user::create::exec(
                     Arc::clone(&config),
-                    "test_system".into(),
+                    "Admin".into(),
                     true,
-                    Some("test_system@localhost.com".into()),
+                    "admin@cryptopay.wtf".into(),
                 )
                 .await?;
 
-                println!("{} System user created", "[SERVICE]".blue());
-                // let token = get_system_user_token(Arc::clone(&config)).await?;
+                println!("{} Admin user created", "[SERVICE]".blue());
+                // let token = get_admin_token(Arc::clone(&config)).await?;
                 // *state.system_user_token.borrow_mut() = Some(token);
             }
         }

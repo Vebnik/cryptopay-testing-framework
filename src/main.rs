@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if !args.skip {
         utils::check_exist_service(Arc::clone(&config)).await?;
         cmd::db::utils::check_exist_db(Arc::clone(&config)).await?;
-        cmd::api::utils::user::check_exist_system_user(Arc::clone(&config)).await?;
+        cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
     } else {
         println!("{} Skip all check", "[SERVICE]".blue());
     }

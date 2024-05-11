@@ -3,14 +3,14 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::{error::Error, sync::Arc};
 
-use crate::{cmd::api::utils::user::get_system_user_token, config::Config};
+use crate::{cmd::api::utils::user::get_admin_token, config::Config};
 
 pub async fn exec(
     config: Arc<Config>,
     name: String,
     kind: String,
 ) -> Result<Vec<String>, Box<dyn Error>> {
-    let user_token = get_system_user_token(Arc::clone(&config)).await?;
+    let user_token = get_admin_token(Arc::clone(&config)).await?;
     let mut networks_id: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
 
     for port in 8545..(8545 + config.anvil_nodes as i32) {

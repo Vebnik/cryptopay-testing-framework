@@ -41,11 +41,12 @@ pub enum NetworkCommands {
 #[derive(Subcommand, Debug, Clone)]
 pub enum UserCommands {
     Create {
-        /// Just user name
-        #[arg(default_value = "Test User")]
+        /// User name
+        #[arg(default_value = "Tester")]
         name: String,
-        /// Just user email [default: "test_<random_u32>@localhost.com"]
-        email: Option<String>,
+        /// User email
+        #[arg(default_value = "test@cryptopay.wtf")]
+        email: String,
         /// Is admin
         #[arg(short)]
         admin: bool,
@@ -68,8 +69,8 @@ pub enum ApiCommands {
 
 #[derive(Subcommand, Debug, Clone)]
 pub enum DbCommands {
-    /// Drop all data
-    Drop,
+    /// Reset the database
+    Reset,
     /// Migrate all data
     Create,
 }

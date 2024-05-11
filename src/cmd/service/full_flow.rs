@@ -22,9 +22,10 @@ pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     let _core_wallet = config.core_priv_key.parse::<LocalWallet>()?;
 
     // Test data
-    let test_user_name = "test_user";
-    let test_user_email = "test_user@localhost.com";
-    let test_wallet_pass = "test1234test";
+    let test_user_name = "Tester";
+    let test_user_email = "test@cryptopay.wtf";
+    
+    let test_wallet_pass = "test1234";
 
     // Test config
     let wallets_count: usize = 9;
@@ -34,17 +35,17 @@ pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
     let mut intents_id: Vec<String> = Vec::new();
 
     // drop exist db
-    cmd::db::drop::exec(Arc::clone(&config)).await?;
+    cmd::db::reset::exec(Arc::clone(&config)).await?;
 
     // check and create system user
-    utils::user::check_exist_system_user(Arc::clone(&config)).await?;
+    utils::user::check_admin_exists(Arc::clone(&config)).await?;
 
     // create simple user
     user::create::exec(
         Arc::clone(&config),
         test_user_name.into(),
         false,
-        Some(test_user_email.into()),
+        test_user_email.into(),
     )
     .await?;
 
