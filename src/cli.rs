@@ -80,10 +80,19 @@ pub enum ServiceCommands {
     /// Exec full flow
     /// Create user -> network -> deploy contract > create asset -> Create wallet
     Full,
+    /// Prepare service
+    ///
+    /// -> Check and create admin user
+    /// -> Check and create tester user
+    /// -> Check and deploy tokens to core wallet
+    /// -> Check and create networks
+    /// -> Check and add assets to networks
+    /// -> Check and create wallet for tester user
+    Prepare,
 }
 
 #[derive(Subcommand, Debug, Clone)]
-pub enum ProcessType {
+pub enum Scope {
     /// EVM scope command
     Evm {
         #[command(subcommand)]
@@ -110,7 +119,7 @@ pub enum ProcessType {
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
-    /// Test process type
+    /// Scope type
     #[command(subcommand)]
-    pub process: ProcessType,
+    pub scope: Scope,
 }

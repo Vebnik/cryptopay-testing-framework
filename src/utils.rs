@@ -5,8 +5,9 @@ use std::{process::exit, sync::Arc};
 use tokio::net::TcpStream;
 
 use crate::{
+    cmd,
     config::{Config, ProviderType},
-    Result,
+    utils, Result,
 };
 
 pub async fn check_exist_service(config: Arc<Config>) -> Result<()> {
@@ -74,4 +75,12 @@ pub async fn get_db(config: Arc<Config>) -> Result<sqlx::Pool<sqlx::Postgres>> {
 
 pub async fn get_config() -> Result<Arc<Config>> {
     Ok(Arc::new(Config::default()))
+}
+
+pub async fn check(config: Arc<Config>) -> Result<()> {
+    utils::check_exist_service(Arc::clone(&config)).await?;
+    cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
+    cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
+
+    Ok(())
 }

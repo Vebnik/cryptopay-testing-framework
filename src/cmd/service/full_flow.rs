@@ -18,6 +18,8 @@ struct NetworkAsset {
 }
 
 pub async fn exec(config: Arc<Config>) -> Result<()> {
+    crate::utils::check(Arc::clone(&config)).await?;
+
     // Test wallet
     let _core_wallet = config.core_priv_key.parse::<LocalWallet>()?;
 
