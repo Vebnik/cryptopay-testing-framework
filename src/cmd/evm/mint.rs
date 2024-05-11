@@ -23,7 +23,7 @@ pub async fn exec(
     contract: String,
     amount: u32,
 ) -> Result<()> {
-    let wallet = config.core_priv_key.parse::<LocalWallet>()?;
+    let wallet = config.core_key.parse::<LocalWallet>()?;
     let contract_addr = Address::from_str(&contract)?;
     let target_addr = Address::from_str(&address)?;
     let decimals = U256::from(10).checked_pow(U256::from(18)).unwrap();

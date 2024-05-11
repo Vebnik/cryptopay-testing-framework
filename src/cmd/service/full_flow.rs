@@ -7,7 +7,7 @@ use std::io;
 
 use crate::config::{Config, TEST_WALLETS};
 use crate::{
-    cmd::api::{asset, intent, network, user, utils, wallet},
+    cmd::api::{asset, intent, network, user, wallet},
     cmd::evm::{deploy, mint, transfer},
     cmd::{api, db, service},
     Result,
@@ -23,7 +23,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     service::utils::check(Arc::clone(&config)).await?;
 
     // Test wallet
-    let _core_wallet = config.core_priv_key.parse::<LocalWallet>()?;
+    let _core_wallet = config.core_key.parse::<LocalWallet>()?;
 
     // Test data
     let test_user_name = "Tester";

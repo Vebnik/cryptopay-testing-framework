@@ -91,7 +91,7 @@ pub async fn balance_test() {
         "contracts/artifacts/ERC20.json"
     }
 
-    // let wallet = Config::default().core_priv_key.parse::<LocalWallet>().unwrap();
+    // let wallet = Config::default().core_key.parse::<LocalWallet>().unwrap();
     let wallet = TEST_WALLETS[0].1.parse::<LocalWallet>().unwrap();
     let core = wallet.address().to_string();
     let contract_address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";

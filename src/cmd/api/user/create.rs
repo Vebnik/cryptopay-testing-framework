@@ -16,7 +16,7 @@ async fn create_admin(config: Arc<Config>, name: String, email: String) -> Resul
     let db = service::utils::get_db(Arc::clone(&config)).await?;
 
     let fee = BigDecimal::from_u32(2).expect("valid");
-    let encrypted = api::utils::password::hash(PASSWORD).await?;
+    let encrypted = api::user::utils::hash(PASSWORD).await?;
 
     let query = format!(
         r#"

@@ -30,7 +30,7 @@ pub struct Config {
     pub db_connect_url: String,
     pub anvil_nodes: i8,
 
-    pub core_priv_key: String,
+    pub core_key: String,
     pub core_address: String,
 
     pub test_priv_key: String,
@@ -55,7 +55,7 @@ impl Default for Config {
             db_connect_url: "postgres://postgres:postgres@localhost:5432/test".into(),
             anvil_nodes: 2,
 
-            core_priv_key: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+            core_key: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
                 .into(),
             core_address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266".into(),
 

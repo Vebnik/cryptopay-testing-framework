@@ -3,14 +3,14 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::sync::Arc;
 
-use crate::{cmd::api::user::utils::get_admin_token, config::Config, Result};
+use crate::{cmd::api, config::Config, Result};
 
 pub async fn exec(config: Arc<Config>, network_id: String, password: String) -> Result<String> {
-    let jwt = get_admin_token(Arc::clone(&config)).await?;
+    let jwt = api::user::utils::get_user_token(Arc::clone(&config)).await?;
 
     let body = json!({
         "networkId": network_id,
-        "password": password
+        "password": password,
     });
 
     let response = reqwest::Client::new()

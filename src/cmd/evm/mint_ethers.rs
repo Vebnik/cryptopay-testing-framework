@@ -46,7 +46,7 @@ pub async fn exec(
     amount: u32,
 ) -> Result<()> {
     let wallet = config
-        .core_priv_key
+        .core_key
         .parse::<LocalWallet>()?
         .with_chain_id(31337u64);
     let contract_addr = Address::from_str(&contract).map_err(|_| Error::EthersHex)?;

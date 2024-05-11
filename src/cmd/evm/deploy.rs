@@ -23,7 +23,7 @@ pub async fn exec(
     symbol: String,
     amount: u32,
 ) -> Result<Vec<String>> {
-    let wallet = config.core_priv_key.parse::<LocalWallet>()?;
+    let wallet = config.core_key.parse::<LocalWallet>()?;
 
     let mut contracts_addresses: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
 

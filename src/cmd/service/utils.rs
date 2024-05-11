@@ -53,7 +53,7 @@ pub async fn check_exist_service(config: Arc<Config>) -> Result<()> {
 }
 
 pub async fn get_provider(config: Arc<Config>) -> Result<ProviderType> {
-    let wallet = config.core_priv_key.parse::<LocalWallet>()?;
+    let wallet = config.core_key.parse::<LocalWallet>()?;
 
     let provider = ProviderBuilder::new()
         .with_recommended_fillers()

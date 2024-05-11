@@ -29,8 +29,9 @@ pub async fn exec(config: Arc<Config>, name: String, kind: String) -> Result<Vec
             StatusCode::CREATED => {
                 let data = response.json::<Value>().await?;
                 println!(
-                    "{} Network created: {}",
+                    "{} Network created: {} ({})",
                     "[API - NETWORK]".blue(),
+                    data["name"],
                     data["id"]
                 );
 
