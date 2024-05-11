@@ -3,10 +3,10 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::sync::Arc;
 
-use crate::{cmd::api::utils::user::get_admin_token, config::Config, Result};
+use crate::{cmd::api::user::utils::get_admin_token, config::Config, Result};
 
 pub async fn exec(config: Arc<Config>, name: String, kind: String) -> Result<Vec<String>> {
-    let user_token = get_admin_token(Arc::clone(&config)).await?;
+    let jwt = get_admin_token(Arc::clone(&config)).await?;
     let mut networks_id: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
 
     for port in 8545..(8545 + config.anvil_nodes as i32) {
@@ -19,7 +19,7 @@ pub async fn exec(config: Arc<Config>, name: String, kind: String) -> Result<Vec
 
         let response = reqwest::Client::new()
             .post("http://localhost:9999/v1/network/create")
-            .header("x-auth-token", user_token.clone())
+            .header("x-auth-token", jwt.clone())
             .header("Content-Type", "application/json")
             .body(body.to_string())
             .send()

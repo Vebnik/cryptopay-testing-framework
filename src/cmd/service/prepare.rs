@@ -13,10 +13,10 @@ use crate::{
 
 pub async fn exec(config: Arc<Config>) -> Result<()> {
     cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
-    crate::utils::check_exist_service(Arc::clone(&config)).await?;
+    cmd::service::utils::check_exist_service(Arc::clone(&config)).await?;
 
-    cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
-    cmd::api::utils::user::check_tester_exists(Arc::clone(&config)).await?;
+    cmd::api::user::utils::check_admin_exists(Arc::clone(&config)).await?;
+    cmd::api::user::utils::check_tester_exists(Arc::clone(&config)).await?;
 
     Ok(())
 }

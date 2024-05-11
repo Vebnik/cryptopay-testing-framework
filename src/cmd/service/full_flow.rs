@@ -7,8 +7,10 @@ use std::io;
 
 use crate::config::{Config, TEST_WALLETS};
 use crate::{
-    cmd, cmd::api::asset, cmd::api::intent, cmd::api::network, cmd::api::user, cmd::api::utils,
-    cmd::api::wallet, cmd::evm::deploy, cmd::evm::mint, cmd::evm::transfer, Result,
+    cmd::api::{asset, intent, network, user, utils, wallet},
+    cmd::evm::{deploy, mint, transfer},
+    cmd::{api, db, service},
+    Result,
 };
 
 #[derive(Debug, Clone)]
@@ -18,7 +20,7 @@ struct NetworkAsset {
 }
 
 pub async fn exec(config: Arc<Config>) -> Result<()> {
-    crate::utils::check(Arc::clone(&config)).await?;
+    service::utils::check(Arc::clone(&config)).await?;
 
     // Test wallet
     let _core_wallet = config.core_priv_key.parse::<LocalWallet>()?;
@@ -37,10 +39,10 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     let mut intents_id: Vec<String> = Vec::new();
 
     // drop exist db
-    cmd::db::reset::exec(Arc::clone(&config)).await?;
+    db::reset::exec(Arc::clone(&config)).await?;
 
     // check and create admin user
-    utils::user::check_admin_exists(Arc::clone(&config)).await?;
+    api::user::utils::check_admin_exists(Arc::clone(&config)).await?;
 
     // create simple user
     user::create::exec(

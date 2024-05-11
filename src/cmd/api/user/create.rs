@@ -4,15 +4,19 @@ use reqwest::StatusCode;
 use serde_json::json;
 use std::sync::Arc;
 
-use crate::{cmd::api::utils::password, config::Config, utils, Result};
+use crate::{
+    cmd::{api, service},
+    config::Config,
+    Result,
+};
 
 const PASSWORD: &str = "test1234";
 
 async fn create_admin(config: Arc<Config>, name: String, email: String) -> Result<()> {
-    let db = utils::get_db(Arc::clone(&config)).await?;
+    let db = service::utils::get_db(Arc::clone(&config)).await?;
 
     let fee = BigDecimal::from_u32(2).expect("valid");
-    let encrypted = password::hash(PASSWORD).await?;
+    let encrypted = api::utils::password::hash(PASSWORD).await?;
 
     let query = format!(
         r#"

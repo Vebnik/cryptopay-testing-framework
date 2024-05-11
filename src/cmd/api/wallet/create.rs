@@ -3,10 +3,10 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::sync::Arc;
 
-use crate::{cmd::api::utils::user::get_admin_token, config::Config, Result};
+use crate::{cmd::api::user::utils::get_admin_token, config::Config, Result};
 
 pub async fn exec(config: Arc<Config>, network_id: String, password: String) -> Result<String> {
-    let user_token = get_admin_token(Arc::clone(&config)).await?;
+    let jwt = get_admin_token(Arc::clone(&config)).await?;
 
     let body = json!({
         "networkId": network_id,
@@ -16,7 +16,7 @@ pub async fn exec(config: Arc<Config>, network_id: String, password: String) -> 
     let response = reqwest::Client::new()
         .post("http://localhost:9999/v1/wallet/create")
         .header("Content-Type", "application/json")
-        .header("x-auth-token", user_token.clone())
+        .header("x-auth-token", jwt)
         .body(body.to_string())
         .send()
         .await;

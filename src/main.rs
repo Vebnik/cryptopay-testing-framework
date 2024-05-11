@@ -5,12 +5,11 @@ pub mod cmd;
 pub mod config;
 pub mod error;
 pub mod tests;
-pub mod utils;
 
 use clap::Parser;
+use cmd::service::utils::{check, get_config};
 use colored::Colorize;
 use std::sync::Arc;
-use utils::{check, get_config};
 
 use cli::Scope;
 pub use config::Config;
