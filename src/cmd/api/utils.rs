@@ -109,7 +109,7 @@ pub mod user {
 
     pub async fn get_user_token(config: Arc<Config>) -> Result<String> {
         let body = json!({
-            "email": "test@cryptopay.wtf",
+            "email": "tester@cryptopay.wtf",
             "password": "test1234"
         });
 
@@ -172,14 +172,47 @@ pub mod user {
                 user::create::exec(
                     Arc::clone(&config),
                     "Admin".into(),
-                    true,
                     "admin@cryptopay.wtf".into(),
+                    true,
                 )
                 .await?;
 
                 println!("{} Admin user created", "[SERVICE]".blue());
                 // let token = get_admin_token(Arc::clone(&config)).await?;
                 // *state.system_user_token.borrow_mut() = Some(token);
+            }
+        }
+
+        Ok(())
+    }
+
+    pub async fn check_tester_exists(config: Arc<Config>) -> Result<()> {
+        let db = utils::get_db(Arc::clone(&config)).await?;
+
+        let res: Result<Uuid, sqlx::Error> =
+            sqlx::query_scalar(r#"select id from "user" where email = 'tester@cryptopay.wtf'"#)
+                .fetch_one(&db)
+                .await;
+
+        match res {
+            Ok(data) => {
+                println!("{} Tester user exists: ({})", "[SERVICE]".blue(), data);
+            }
+            Err(err) => {
+                println!(
+                    "{} Tester user does not exist, creating",
+                    "[SERVICE]".blue(),
+                );
+
+                user::create::exec(
+                    Arc::clone(&config),
+                    "Tester".into(),
+                    "tester@cryptopay.wtf".into(),
+                    false,
+                )
+                .await?;
+
+                println!("{} Tester user created", "[SERVICE]".blue());
             }
         }
 

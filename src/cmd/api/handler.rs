@@ -11,7 +11,7 @@ pub async fn exec(cmd: ApiCommands, config: Arc<Config>) -> Result<()> {
     match cmd {
         ApiCommands::User { cmd } => match cmd {
             UserCommands::Create { name, admin, email } => {
-                api::user::create::exec(Arc::clone(&config), name, admin, email).await?;
+                api::user::create::exec(Arc::clone(&config), name, email, admin).await?;
             }
         },
         ApiCommands::Network { cmd } => match cmd {

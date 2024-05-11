@@ -45,7 +45,7 @@ pub enum UserCommands {
         #[arg(default_value = "Tester")]
         name: String,
         /// User email
-        #[arg(default_value = "test@cryptopay.wtf")]
+        #[arg(default_value = "tester@cryptopay.wtf")]
         email: String,
         /// Is admin
         #[arg(short)]

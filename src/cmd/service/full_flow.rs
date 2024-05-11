@@ -23,7 +23,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     // Test data
     let test_user_name = "Tester";
-    let test_user_email = "test@cryptopay.wtf";
+    let test_user_email = "tester@cryptopay.wtf";
 
     let test_wallet_pass = "test1234test";
 
@@ -44,8 +44,8 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     user::create::exec(
         Arc::clone(&config),
         test_user_name.into(),
-        false,
         test_user_email.into(),
+        false,
     )
     .await?;
 

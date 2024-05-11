@@ -79,7 +79,7 @@ async fn user_flow(_state: Arc<Config>, name: String, email: String) -> Result<(
     Ok(())
 }
 
-pub async fn exec(config: Arc<Config>, name: String, is_admin: bool, email: String) -> Result<()> {
+pub async fn exec(config: Arc<Config>, name: String, email: String, is_admin: bool,) -> Result<()> {
     if is_admin {
         admin_flow(Arc::clone(&config), name, email).await?
     } else {
