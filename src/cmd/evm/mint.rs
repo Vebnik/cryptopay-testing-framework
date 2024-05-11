@@ -31,8 +31,8 @@ pub async fn exec(
     for port in 8545..(8545 + config.anvil_nodes as i32) {
         println!("try minting on port: {}", port);
         let provide = ProviderBuilder::new()
-            .with_recommended_fillers()
-            .signer(EthereumSigner::from(wallet.clone()))
+            // .with_recommended_fillers()
+            // .signer(EthereumSigner::from(wallet.clone()))
             .on_builtin(&format!("http://localhost:{}", port))
             .await?;
 
