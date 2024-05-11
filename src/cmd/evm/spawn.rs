@@ -18,11 +18,15 @@ pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<(), Box
     let mut instances = Vec::with_capacity(amount_nodes as usize);
 
     for port in 8545u32..(8545u32 + amount_nodes) {
-        println!("{} Try to spawn Node with port: {port}", "[EVM]".blue());
+        println!("{} Spawning node on port: {port}", "[EVM]".blue());
 
         let mut cmd = Command::new("anvil")
             .arg("-p")
             .arg(port.to_string())
+            .arg("--block-time")
+            .arg("10")
+            .arg("--slots-in-an-epoch")
+            .arg("1")
             // .arg("--auto-impersonate")
             // .arg("--prune-history")
             .stdout(Stdio::null())
