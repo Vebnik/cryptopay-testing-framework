@@ -1,3 +1,8 @@
+use ethers::{
+    middleware::SignerMiddleware, providers::Provider, providers::Ws, signers::LocalWallet,
+};
+use std::sync::Arc;
+
 #[allow(clippy::enum_variant_names)]
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -21,6 +26,10 @@ pub enum Error {
     #[error("wallet error: {0}")]
     Wallet(#[from] alloy::signers::wallet::WalletError),
 
+    /// Ethers wallet errors.
+    #[error("ethers wallet error: {0}")]
+    EthersWallet(#[from] ethers::signers::WalletError),
+
     /// Transport layer errors.
     #[error("transport error: {0}")]
     Transport(#[from] alloy::transports::RpcError<alloy::transports::TransportErrorKind>),
@@ -29,9 +38,19 @@ pub enum Error {
     #[error("contract error: {0}")]
     Contract(#[from] alloy::contract::Error),
 
+    /// Ethers contract errors.
+    #[error("ethers contract error: {0}")]
+    EthersContract(
+        #[from] ethers::contract::ContractError<SignerMiddleware<Arc<Provider<Ws>>, LocalWallet>>,
+    ),
+
     /// Hex errors.
     #[error("hex error: {0}")]
     Hex(#[from] alloy::hex::FromHexError),
+
+    /// Ethers hex errors.
+    #[error("ethers hex error")]
+    EthersHex,
 
     /// Password hashing error.
     #[error("error hashing password with argon2")]

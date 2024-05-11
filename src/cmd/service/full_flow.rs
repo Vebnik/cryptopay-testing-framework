@@ -25,7 +25,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     let test_user_name = "Tester";
     let test_user_email = "test@cryptopay.wtf";
 
-    let test_wallet_pass = "test1234";
+    let test_wallet_pass = "test1234test";
 
     // Test config
     let wallets_count: usize = 9;
@@ -37,7 +37,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     // drop exist db
     cmd::db::reset::exec(Arc::clone(&config)).await?;
 
-    // check and create system user
+    // check and create admin user
     utils::user::check_admin_exists(Arc::clone(&config)).await?;
 
     // create simple user
@@ -50,7 +50,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     .await?;
 
     // create networks
-    let networks_id =
+    let network_ids =
         network::create::exec(Arc::clone(&config), "Local ETH".into(), "EVM".into()).await?;
 
     let mut confirm = String::new();
@@ -62,7 +62,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     println!("{} Restarted ...", "[SERVICE]".blue());
 
     // create wallet with network and test_system_user
-    for network_id in networks_id.clone() {
+    for network_id in network_ids.clone() {
         let wallet =
             wallet::create::exec(Arc::clone(&config), network_id, test_wallet_pass.into()).await?;
 
@@ -79,7 +79,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     .await?;
 
     // deploy contracts each anvil nodes with sigkey test_system_user
-    for network_id in networks_id.clone() {
+    for network_id in network_ids.clone() {
         let asset_id = asset::create::exec(
             Arc::clone(&config),
             network_id.clone(),
@@ -105,6 +105,8 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
         )
         .await?;
     }
+
+    println!("AFTER");
 
     // create intent
     for na in assets_networks {

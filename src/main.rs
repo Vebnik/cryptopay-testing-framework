@@ -13,9 +13,16 @@ use std::sync::Arc;
 use utils::get_config;
 
 use cli::ProcessType;
+pub use config::Config;
 pub use error::{Error, Result};
 
-fn check() {}
+async fn check(config: Arc<Config>) -> Result<()> {
+    utils::check_exist_service(Arc::clone(&config)).await?;
+    cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
+    cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
+
+    Ok(())
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -28,16 +35,12 @@ async fn main() -> Result<()> {
             cmd::evm::handler::exec(cmd.clone(), Arc::clone(&config)).await?
         }
         ProcessType::Api { cmd } => {
-            utils::check_exist_service(Arc::clone(&config)).await?;
-            cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
-            cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
+            check(Arc::clone(&config)).await?;
 
             cmd::api::handler::exec(cmd.clone(), Arc::clone(&config)).await?
         }
         ProcessType::Service { cmd } => {
-            utils::check_exist_service(Arc::clone(&config)).await?;
-            cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
-            cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
+            check(Arc::clone(&config)).await?;
 
             cmd::service::handler::exec(cmd.clone(), Arc::clone(&config)).await?
         }

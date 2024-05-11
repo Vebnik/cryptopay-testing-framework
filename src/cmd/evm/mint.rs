@@ -29,6 +29,7 @@ pub async fn exec(
     let decimals = U256::from(10).checked_pow(U256::from(18)).unwrap();
 
     for port in 8545..(8545 + config.anvil_nodes as i32) {
+        println!("try minting on port: {}", port);
         let provide = ProviderBuilder::new()
             .with_recommended_fillers()
             .signer(EthereumSigner::from(wallet.clone()))

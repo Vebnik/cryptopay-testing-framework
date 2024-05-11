@@ -6,15 +6,15 @@ use std::sync::Arc;
 use crate::{config::Config, Result};
 
 pub async fn check_db_exists(config: Arc<Config>) -> Result<()> {
-    let is_exist = sqlx::Postgres::database_exists(&config.db_connect_url)
+    let does_exist = sqlx::Postgres::database_exists(&config.db_connect_url)
         .await
         .expect("Error in check exist db");
 
-    match is_exist {
+    match does_exist {
         false => {
-            println!("{} Database not exist, try to create", "[DB]".blue());
+            println!("{} Database does not exist, trying to create", "[DB]".blue());
             sqlx::Postgres::create_database(&config.db_connect_url).await?;
-            println!("{} Success create database", "[DB]".blue());
+            println!("{} Success creating database", "[DB]".blue());
 
             // println!("{} Try to migrate", "[DB]".blue());
             // let db = utils::get_db(Arc::clone(&config)).await?;
@@ -25,7 +25,7 @@ pub async fn check_db_exists(config: Arc<Config>) -> Result<()> {
             // drop(db)
         }
         true => {
-            println!("{} Database exist", "[DB]".blue())
+            println!("{} Database exists", "[DB]".blue())
         }
     }
 
