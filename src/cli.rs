@@ -113,8 +113,4 @@ pub struct Args {
     /// Test process type
     #[command(subcommand)]
     pub process: ProcessType,
-
-    #[arg(short)]
-    /// Skip all service check
-    pub skip: bool,
 }

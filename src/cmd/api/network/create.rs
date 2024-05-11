@@ -1,15 +1,11 @@
 use colored::Colorize;
 use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 
-use crate::{cmd::api::utils::user::get_admin_token, config::Config};
+use crate::{cmd::api::utils::user::get_admin_token, config::Config, Result};
 
-pub async fn exec(
-    config: Arc<Config>,
-    name: String,
-    kind: String,
-) -> Result<Vec<String>, Box<dyn Error>> {
+pub async fn exec(config: Arc<Config>, name: String, kind: String) -> Result<Vec<String>> {
     let user_token = get_admin_token(Arc::clone(&config)).await?;
     let mut networks_id: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
 

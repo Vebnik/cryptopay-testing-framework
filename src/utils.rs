@@ -1,12 +1,15 @@
 use alloy::{network::EthereumSigner, providers::ProviderBuilder, signers::wallet::LocalWallet};
 use colored::Colorize;
 use sqlx::postgres::PgPoolOptions;
-use std::{error::Error, process::exit, sync::Arc};
+use std::{process::exit, sync::Arc};
 use tokio::net::TcpStream;
 
-use crate::config::{Config, ProviderType};
+use crate::{
+    config::{Config, ProviderType},
+    Result,
+};
 
-pub async fn check_exist_service(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+pub async fn check_exist_service(config: Arc<Config>) -> Result<()> {
     let mut errors: Vec<i8> = Vec::with_capacity(3);
 
     // anvil
@@ -48,7 +51,7 @@ pub async fn check_exist_service(config: Arc<Config>) -> Result<(), Box<dyn Erro
     Ok(())
 }
 
-pub async fn get_provider(config: Arc<Config>) -> Result<ProviderType, Box<dyn Error>> {
+pub async fn get_provider(config: Arc<Config>) -> Result<ProviderType> {
     let wallet = config.core_priv_key.parse::<LocalWallet>()?;
 
     let provider = ProviderBuilder::new()
@@ -60,7 +63,7 @@ pub async fn get_provider(config: Arc<Config>) -> Result<ProviderType, Box<dyn E
     Ok(provider)
 }
 
-pub async fn get_db(config: Arc<Config>) -> Result<sqlx::Pool<sqlx::Postgres>, Box<dyn Error>> {
+pub async fn get_db(config: Arc<Config>) -> Result<sqlx::Pool<sqlx::Postgres>> {
     let db = PgPoolOptions::new()
         .max_connections(20)
         .connect(&config.db_connect_url)
@@ -69,6 +72,6 @@ pub async fn get_db(config: Arc<Config>) -> Result<sqlx::Pool<sqlx::Postgres>, B
     Ok(db)
 }
 
-pub async fn get_config() -> Result<Arc<Config>, Box<dyn Error>> {
+pub async fn get_config() -> Result<Arc<Config>> {
     Ok(Arc::new(Config::default()))
 }

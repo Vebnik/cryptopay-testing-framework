@@ -7,9 +7,12 @@ use ethers::{
     signers::{LocalWallet, Signer},
     types,
 };
-use std::{error::Error, str::FromStr, sync::Arc};
+use std::{str::FromStr, sync::Arc};
 
-use crate::config::{Config, ProviderType};
+use crate::{
+    config::{Config, ProviderType},
+    Result,
+};
 
 sol! {
     #[allow(missing_docs)]
@@ -39,7 +42,7 @@ pub async fn exec(
     contract: String,
     amount: u32,
     provider: ProviderType,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     let recipient = primitives::Address::from_str(&recipient)?;
     let contract = primitives::Address::from_str(&contract)?;
     let sender = primitives::Address::from_str(&sender)?;
@@ -85,7 +88,7 @@ pub async fn exec_ethers(
     contract_addr: String,
     amount: u32,
     provider: Provider<Ws>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     let contract_addr = contract_addr.parse::<types::Address>().unwrap();
     let wallet = sender_key
         .parse::<LocalWallet>()

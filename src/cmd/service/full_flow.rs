@@ -1,4 +1,4 @@
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 
 use alloy::signers::wallet::LocalWallet;
 use colored::Colorize;
@@ -8,7 +8,7 @@ use std::io;
 use crate::config::{Config, TEST_WALLETS};
 use crate::{
     cmd, cmd::api::asset, cmd::api::intent, cmd::api::network, cmd::api::user, cmd::api::utils,
-    cmd::api::wallet, cmd::evm::deploy, cmd::evm::mint, cmd::evm::transfer,
+    cmd::api::wallet, cmd::evm::deploy, cmd::evm::mint, cmd::evm::transfer, Result,
 };
 
 #[derive(Debug, Clone)]
@@ -17,14 +17,14 @@ struct NetworkAsset {
     pub asset_id: String,
 }
 
-pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+pub async fn exec(config: Arc<Config>) -> Result<()> {
     // Test wallet
     let _core_wallet = config.core_priv_key.parse::<LocalWallet>()?;
 
     // Test data
     let test_user_name = "Tester";
     let test_user_email = "test@cryptopay.wtf";
-    
+
     let test_wallet_pass = "test1234";
 
     // Test config

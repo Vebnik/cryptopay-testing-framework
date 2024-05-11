@@ -3,39 +3,42 @@
 pub mod cli;
 pub mod cmd;
 pub mod config;
+pub mod error;
 pub mod tests;
 pub mod utils;
 
 use clap::Parser;
 use colored::Colorize;
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 use utils::get_config;
 
 use cli::ProcessType;
+pub use error::{Error, Result};
+
+fn check() {}
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<()> {
     // init data
     let args = cli::Args::parse();
     let config = get_config().await?;
-
-    // start utils
-    if !args.skip {
-        utils::check_exist_service(Arc::clone(&config)).await?;
-        cmd::db::utils::check_exist_db(Arc::clone(&config)).await?;
-        cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
-    } else {
-        println!("{} Skip all check", "[SERVICE]".blue());
-    }
 
     match &args.process {
         ProcessType::Evm { cmd } => {
             cmd::evm::handler::exec(cmd.clone(), Arc::clone(&config)).await?
         }
         ProcessType::Api { cmd } => {
+            utils::check_exist_service(Arc::clone(&config)).await?;
+            cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
+            cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
+
             cmd::api::handler::exec(cmd.clone(), Arc::clone(&config)).await?
         }
         ProcessType::Service { cmd } => {
+            utils::check_exist_service(Arc::clone(&config)).await?;
+            cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
+            cmd::api::utils::user::check_admin_exists(Arc::clone(&config)).await?;
+
             cmd::service::handler::exec(cmd.clone(), Arc::clone(&config)).await?
         }
         ProcessType::Db { cmd } => cmd::db::handler::exec(cmd.clone(), Arc::clone(&config)).await?,

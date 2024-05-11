@@ -1,11 +1,11 @@
 use colored::Colorize;
 use sqlx::migrate::MigrateDatabase;
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 
 // use crate::{config::Config, utils};
-use crate::config::Config;
+use crate::{config::Config, Result};
 
-pub async fn check_exist_db(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+pub async fn check_db_exists(config: Arc<Config>) -> Result<()> {
     let is_exist = sqlx::Postgres::database_exists(&config.db_connect_url)
         .await
         .expect("Error in check exist db");

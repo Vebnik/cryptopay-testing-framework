@@ -6,9 +6,9 @@ use alloy::{
     sol,
 };
 use colored::Colorize;
-use std::{error::Error, str::FromStr, sync::Arc};
+use std::{str::FromStr, sync::Arc};
 
-use crate::config::Config;
+use crate::{config::Config, Result};
 
 sol! {
     #[allow(missing_docs)]
@@ -22,7 +22,7 @@ pub async fn exec(
     address: String,
     contract: String,
     amount: u32,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     let wallet = config.core_priv_key.parse::<LocalWallet>()?;
     let contract_addr = Address::from_str(&contract)?;
     let target_addr = Address::from_str(&address)?;

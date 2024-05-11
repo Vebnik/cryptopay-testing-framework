@@ -1,15 +1,14 @@
 use colored::Colorize;
-use std::error::Error;
 use std::sync::Arc;
 
 use crate::{
-    cmd::{self, db::utils::check_exist_db},
+    cmd::{self, db::utils::check_db_exists},
     config::Config,
-    utils,
+    utils, Result,
 };
 
-pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
-    check_exist_db(Arc::clone(&config)).await?;
+pub async fn exec(config: Arc<Config>) -> Result<()> {
+    check_db_exists(Arc::clone(&config)).await?;
 
     println!("{} Dropping the database", "[DB]".blue());
 

@@ -6,9 +6,9 @@ use alloy::{
     sol,
 };
 use colored::Colorize;
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 
-use crate::config::Config;
+use crate::{config::Config, Result};
 
 sol! {
     #[allow(missing_docs)]
@@ -22,7 +22,7 @@ pub async fn exec(
     name: String,
     symbol: String,
     amount: u32,
-) -> Result<Vec<String>, Box<dyn Error>> {
+) -> Result<Vec<String>> {
     let wallet = config.core_priv_key.parse::<LocalWallet>()?;
 
     let mut contracts_addresses: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);

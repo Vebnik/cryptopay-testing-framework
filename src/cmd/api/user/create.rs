@@ -2,18 +2,11 @@ use bigdecimal::{BigDecimal, FromPrimitive};
 use colored::Colorize;
 use reqwest::StatusCode;
 use serde_json::json;
-use std::error::Error;
 use std::sync::Arc;
 
-use crate::cmd::api::utils::password;
-use crate::config::Config;
-use crate::utils;
+use crate::{cmd::api::utils::password, config::Config, utils, Result};
 
-async fn admin_flow(
-    config: Arc<Config>,
-    name: String,
-    email: String,
-) -> Result<(), Box<dyn Error>> {
+async fn admin_flow(config: Arc<Config>, name: String, email: String) -> Result<()> {
     let db = utils::get_db(Arc::clone(&config)).await?;
 
     let fee = BigDecimal::from_u32(2).expect("valid");
@@ -45,11 +38,7 @@ async fn admin_flow(
     Ok(())
 }
 
-async fn user_flow(
-    _state: Arc<Config>,
-    name: String,
-    email: String,
-) -> Result<(), Box<dyn Error>> {
+async fn user_flow(_state: Arc<Config>, name: String, email: String) -> Result<()> {
     let password = "test1234";
 
     let body = json!({
@@ -90,12 +79,7 @@ async fn user_flow(
     Ok(())
 }
 
-pub async fn exec(
-    config: Arc<Config>,
-    name: String,
-    is_admin: bool,
-    email: String,
-) -> Result<(), Box<dyn Error>> {
+pub async fn exec(config: Arc<Config>, name: String, is_admin: bool, email: String) -> Result<()> {
     if is_admin {
         admin_flow(Arc::clone(&config), name, email).await?
     } else {

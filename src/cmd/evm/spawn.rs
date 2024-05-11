@@ -1,5 +1,4 @@
 use std::{
-    error::Error,
     process::{exit, Stdio},
     sync::Arc,
 };
@@ -7,9 +6,9 @@ use std::{
 use colored::Colorize;
 use tokio::process::Command;
 
-use crate::config::Config;
+use crate::{config::Config, Result};
 
-pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<(), Box<dyn Error>> {
+pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<()> {
     if amount_nodes > 10 {
         println!("{} Node amount overhead: {amount_nodes}", "[EVM]".blue());
         exit(0)

@@ -10,11 +10,16 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
 tokio = { version = "1", features = ["full", "test-util"] }
-reqwest = { version = "0.12.4" }
-colored = { version = "2.1.0" }
 bigdecimal = { version = "0.3.1", features = ["serde"] }
-argon2 = { version = "0.5.2" }
-rand = { version = "0.8.5" }
+ethers = { version = "2.0.14", features = ["ws"] }
+reqwest = "0.12.4"
+colored = "2.1.0"
+argon2 = "0.5.2"
+rand = "0.8.5"
+serde = "1.0.201"
+serde_json = "1.0.116"
+thiserror = "1.0.60"
+anyhow = "1.0.83"
 
 [dependencies.alloy]
 git = "https://github.com/alloy-rs/alloy.git"
@@ -30,11 +35,6 @@ features = [
     "transports"
 ]
 
-[dependencies.ethers]
-version = "2.0.14"
-features = [
-    "ws"
-]
 
 [dependencies.sqlx]
 version = "0.7.4"
@@ -46,6 +46,3 @@ features = [
     "uuid",
     "bigdecimal",
 ]
-
-[dependencies.serde_json]
-version = "1.0.116"

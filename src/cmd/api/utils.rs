@@ -1,16 +1,16 @@
 pub mod password {
-    use std::error::Error;
-    use std::io;
-
     use argon2::password_hash::SaltString;
     use argon2::{Argon2, PasswordHasher};
+    use std::io;
 
-    pub async fn hash(password: &str) -> Result<String, Box<dyn Error>> {
+    use crate::{Error, Result};
+
+    pub async fn hash(password: &str) -> Result<String> {
         let salt = SaltString::generate(rand::thread_rng());
 
         let pass = Argon2::default()
             .hash_password(password.as_bytes(), &salt)
-            .map_err(|err| io::Error::new(io::ErrorKind::Other, err.to_string()))?
+            .map_err(|_| Error::PasswordHash)?
             .to_string();
 
         Ok(pass)
@@ -21,14 +21,14 @@ pub mod user {
     use colored::Colorize;
     use serde_json::{json, Value};
     use sqlx::types::Uuid;
+    use std::process::exit;
     use std::sync::Arc;
-    use std::{error::Error, process::exit};
 
     use crate::cmd::api::user;
     use crate::config::Config;
-    use crate::utils;
+    use crate::{utils, Result};
 
-    pub async fn get_admin_user_id(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+    pub async fn get_admin_user_id(config: Arc<Config>) -> Result<String> {
         let token = get_admin_token(Arc::clone(&config)).await?;
 
         let response = reqwest::Client::new()
@@ -42,7 +42,7 @@ pub mod user {
             Ok(res) => {
                 if res.status().as_u16() > 201u16 {
                     println!(
-                        "{} System user info error: ({})",
+                        "{} Admin user info error: ({})",
                         "[SERVICE]".blue(),
                         res.text().await?
                     );
@@ -53,7 +53,7 @@ pub mod user {
                     .to_string()
                     .replace("\"", "");
 
-                println!("{} System user id: ({})", "[SERVICE]".blue(), id);
+                println!("{} Admin user ID: ({})", "[SERVICE]".blue(), id);
 
                 return Ok(id);
             }
@@ -64,7 +64,7 @@ pub mod user {
         }
     }
 
-    pub async fn get_admin_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+    pub async fn get_admin_token(config: Arc<Config>) -> Result<String> {
         let body = json!({
             "email": "admin@cryptopay.wtf",
             "password": "test1234"
@@ -81,7 +81,7 @@ pub mod user {
             Ok(res) => {
                 if res.status().as_u16() > 201u16 {
                     println!(
-                        "{} System user token error: ({})",
+                        "{} Admin user token error: ({})",
                         "[SERVICE]".blue(),
                         res.text().await?
                     );
@@ -93,7 +93,7 @@ pub mod user {
                     .replace("\"", "");
 
                 println!(
-                    "{} System user token: ({} chars)",
+                    "{} Admin user token: ({} chars)",
                     "[SERVICE]".blue(),
                     token.len()
                 );
@@ -101,13 +101,13 @@ pub mod user {
                 return Ok(token);
             }
             Err(err) => {
-                println!("{} System user token error: ({})", "[SERVICE]".blue(), err);
+                println!("{} Admin user token error: ({})", "[SERVICE]".blue(), err);
                 exit(0)
             }
         }
     }
 
-    pub async fn get_user_token(config: Arc<Config>) -> Result<String, Box<dyn Error>> {
+    pub async fn get_user_token(config: Arc<Config>) -> Result<String> {
         let body = json!({
             "email": "test@cryptopay.wtf",
             "password": "test1234"
@@ -124,7 +124,7 @@ pub mod user {
             Ok(res) => {
                 if res.status().as_u16() > 201u16 {
                     println!(
-                        "{} User token error: ({})",
+                        "{} Test user token error: ({})",
                         "[SERVICE]".blue(),
                         res.text().await?
                     );
@@ -135,18 +135,22 @@ pub mod user {
                     .to_string()
                     .replace("\"", "");
 
-                println!("{} User token: ({} chars)", "[SERVICE]".blue(), token.len());
+                println!(
+                    "{} Test user token: ({} chars)",
+                    "[SERVICE]".blue(),
+                    token.len()
+                );
 
                 return Ok(token);
             }
             Err(err) => {
-                println!("{} User token error: ({})", "[SERVICE]".blue(), err);
+                println!("{} Test user token error: ({})", "[SERVICE]".blue(), err);
                 exit(0)
             }
         }
     }
 
-    pub async fn check_admin_exists(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+    pub async fn check_admin_exists(config: Arc<Config>) -> Result<()> {
         let db = utils::get_db(Arc::clone(&config)).await?;
 
         let res: Result<Uuid, sqlx::Error> =

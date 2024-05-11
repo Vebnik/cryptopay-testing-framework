@@ -1,9 +1,9 @@
 use colored::Colorize;
 use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 
-use crate::{cmd::api::utils::user::get_admin_token, config::Config};
+use crate::{cmd::api::utils::user::get_admin_token, config::Config, Result};
 
 pub async fn exec(
     config: Arc<Config>,
@@ -11,7 +11,7 @@ pub async fn exec(
     name: String,
     symbol: String,
     address: String,
-) -> Result<String, Box<dyn Error>> {
+) -> Result<String> {
     let user_token = get_admin_token(Arc::clone(&config)).await?;
 
     let body = json!({

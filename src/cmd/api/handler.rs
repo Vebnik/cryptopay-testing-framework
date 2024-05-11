@@ -1,13 +1,13 @@
-use std::error::Error;
 use std::sync::Arc;
 
 use crate::{
     cli::{ApiCommands, NetworkCommands, UserCommands},
     cmd::api,
     config::Config,
+    Result,
 };
 
-pub async fn exec(cmd: ApiCommands, config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+pub async fn exec(cmd: ApiCommands, config: Arc<Config>) -> Result<()> {
     match cmd {
         ApiCommands::User { cmd } => match cmd {
             UserCommands::Create { name, admin, email } => {

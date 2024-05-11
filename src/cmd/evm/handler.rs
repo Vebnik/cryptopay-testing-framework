@@ -1,9 +1,8 @@
-use std::error::Error;
 use std::sync::Arc;
 
-use crate::{cli::EvmCommands, cmd::evm, config::Config};
+use crate::{cli::EvmCommands, cmd::evm, config::Config, Result};
 
-pub async fn exec(cmd: EvmCommands, config: Arc<Config>) -> Result<(), Box<dyn Error>> {
+pub async fn exec(cmd: EvmCommands, config: Arc<Config>) -> Result<()> {
     match cmd {
         EvmCommands::Deploy {
             name,

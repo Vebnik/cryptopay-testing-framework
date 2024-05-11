@@ -1,16 +1,16 @@
 use colored::Colorize;
-use std::{error::Error, sync::Arc};
+use std::sync::Arc;
 
-use crate::{cmd::db::utils::check_exist_db, config::Config, utils};
+use crate::{cmd::db::utils::check_db_exists, config::Config, utils, Result};
 
-pub async fn exec(config: Arc<Config>) -> Result<(), Box<dyn Error>> {
-    check_exist_db(Arc::clone(&config)).await?;
+pub async fn exec(config: Arc<Config>) -> Result<()> {
+    check_db_exists(Arc::clone(&config)).await?;
 
     let db = utils::get_db(Arc::clone(&config)).await?;
 
-    println!("{} Try to migrate", "[DB]".blue());
+    println!("{} Migrating the database", "[DB]".blue());
     sqlx::migrate!("./migrations").run(&db).await?;
-    println!("{} Success migrated", "[DB]".blue());
+    println!("{} Successfully migrated", "[DB]".blue());
 
     Ok(())
 }
