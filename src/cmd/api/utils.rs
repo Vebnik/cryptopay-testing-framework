@@ -163,11 +163,7 @@ pub mod user {
                 println!("{} Admin user exists: ({})", "[SERVICE]".blue(), data);
             }
             Err(err) => {
-                println!(
-                    "{} Admin user does not exist, creating: {}",
-                    "[SERVICE]".blue(),
-                    err
-                );
+                println!("{} Admin user does not exist, creating", "[SERVICE]".blue(),);
 
                 user::create::exec(
                     Arc::clone(&config),
@@ -177,7 +173,7 @@ pub mod user {
                 )
                 .await?;
 
-                println!("{} Admin user created", "[SERVICE]".blue());
+                // println!("{} Admin user created", "[SERVICE]".blue());
                 // let token = get_admin_token(Arc::clone(&config)).await?;
                 // *state.system_user_token.borrow_mut() = Some(token);
             }
@@ -212,7 +208,7 @@ pub mod user {
                 )
                 .await?;
 
-                println!("{} Tester user created", "[SERVICE]".blue());
+                // println!("{} Tester user created", "[SERVICE]".blue());
             }
         }
 

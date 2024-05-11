@@ -6,11 +6,13 @@ use std::sync::Arc;
 
 use crate::{cmd::api::utils::password, config::Config, utils, Result};
 
-async fn admin_flow(config: Arc<Config>, name: String, email: String) -> Result<()> {
+const PASSWORD: &str = "test1234";
+
+async fn create_admin(config: Arc<Config>, name: String, email: String) -> Result<()> {
     let db = utils::get_db(Arc::clone(&config)).await?;
 
     let fee = BigDecimal::from_u32(2).expect("valid");
-    let encrypted = password::hash("test1234").await?;
+    let encrypted = password::hash(PASSWORD).await?;
 
     let query = format!(
         r#"
@@ -26,25 +28,27 @@ async fn admin_flow(config: Arc<Config>, name: String, email: String) -> Result<
     match result {
         Ok(_raw) => {
             println!(
-                "{} User created: (email: {email}, password: test1234)",
+                "{} Admin user created: (email: {email}, password: {PASSWORD})",
                 "[API - USER]".blue(),
             );
         }
         Err(err) => {
-            println!("{} User not created: ({})", "[API - USER]".blue(), err);
+            println!(
+                "{} Admin user not created: ({})",
+                "[API - USER]".blue(),
+                err
+            );
         }
     }
 
     Ok(())
 }
 
-async fn user_flow(_state: Arc<Config>, name: String, email: String) -> Result<()> {
-    let password = "test1234";
-
+async fn create_user(_state: Arc<Config>, name: String, email: String) -> Result<()> {
     let body = json!({
         "name": name,
         "email": email,
-        "password": password,
+        "password": PASSWORD,
         "currency": "EUR"
     });
 
@@ -59,31 +63,35 @@ async fn user_flow(_state: Arc<Config>, name: String, email: String) -> Result<(
         Ok(res) => match res.status() {
             StatusCode::CREATED => {
                 println!(
-                    "{} User created: (email: {email}, password: {password})",
+                    "{} Tester user created: (email: {email}, password: {PASSWORD})",
                     "[API - USER]".blue(),
                 );
             }
             _ => {
                 println!(
-                    "{} User not created: ({})",
+                    "{} Tester user not created: ({})",
                     "[API - USER]".blue(),
                     res.status()
                 );
             }
         },
         Err(err) => {
-            println!("{} User not created: ({})", "[API - USER]".blue(), err);
+            println!(
+                "{} Tester user not created: ({})",
+                "[API - USER]".blue(),
+                err
+            );
         }
     }
 
     Ok(())
 }
 
-pub async fn exec(config: Arc<Config>, name: String, email: String, is_admin: bool,) -> Result<()> {
+pub async fn exec(config: Arc<Config>, name: String, email: String, is_admin: bool) -> Result<()> {
     if is_admin {
-        admin_flow(Arc::clone(&config), name, email).await?
+        create_admin(Arc::clone(&config), name, email).await?
     } else {
-        user_flow(Arc::clone(&config), name, email).await?
+        create_user(Arc::clone(&config), name, email).await?
     }
 
     Ok(())
