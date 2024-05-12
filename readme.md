@@ -23,7 +23,8 @@ Options:
 
 1. Cryptopay - [gitea](https://git.topg.systems/cryptopay/cryptopay)
 2. Foundry (only anvil) - [github](https://github.com/foundry-rs)
-3. postgres (may use dockerfile)
+3. Docker (optionaly)
+3. Postgres (optionaly - may use dockerfile)
 
 ### How to use 🕹️
 
