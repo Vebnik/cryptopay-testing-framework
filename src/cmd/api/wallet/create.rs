@@ -49,3 +49,17 @@ pub async fn exec(config: Arc<Config>, network_id: String) -> Result<String> {
 
     Ok("None".into())
 }
+
+pub async fn check_wallets_exist(
+    config: Arc<Config>,
+    networks: Vec<String>,
+) -> Result<Vec<String>> {
+    let mut wallets = Vec::new();
+
+    for network_id in networks {
+        let wallet = exec(Arc::clone(&config), network_id).await?;
+        wallets.push(wallet);
+    }
+
+    Ok(wallets)
+}

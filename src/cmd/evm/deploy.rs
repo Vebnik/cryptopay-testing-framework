@@ -5,10 +5,18 @@ use alloy::{
     signers::wallet::LocalWallet,
     sol,
 };
+use bigdecimal::BigDecimal;
 use colored::Colorize;
+use serde::{Deserialize, Serialize};
+use sqlx::Row;
 use std::sync::Arc;
+use uuid::Uuid;
 
-use crate::{config::Config, Result};
+use crate::{
+    cmd::{self, api},
+    config::Config,
+    Result,
+};
 
 sol! {
     #[allow(missing_docs)]
@@ -61,6 +69,15 @@ pub async fn exec(
     Ok(contracts_addresses)
 }
 
-pub async fn check_contracts_exist(config: Arc<Config>) -> Result<()> {
-    todo!()
+pub async fn check_contracts_exist(config: Arc<Config>) -> Result<Vec<String>> {
+    // Deploy contracts
+    let contracts = exec(
+        Arc::clone(&config),
+        "Test USDT".into(),
+        "TUSDT".into(),
+        10000,
+    )
+    .await?;
+
+    return Ok(contracts);
 }
