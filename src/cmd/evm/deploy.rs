@@ -60,3 +60,7 @@ pub async fn exec(
 
     Ok(contracts_addresses)
 }
+
+pub async fn check_contracts_exist(config: Arc<Config>) -> Result<()> {
+    todo!()
+}

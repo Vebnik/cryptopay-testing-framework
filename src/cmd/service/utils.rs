@@ -10,7 +10,7 @@ use crate::{
     Result,
 };
 
-pub async fn check_exist_service(config: Arc<Config>) -> Result<()> {
+pub async fn check_service_exists(config: Arc<Config>) -> Result<()> {
     let mut errors: Vec<i8> = Vec::with_capacity(3);
 
     // anvil
@@ -78,7 +78,7 @@ pub async fn get_config() -> Result<Arc<Config>> {
 }
 
 pub async fn check(config: Arc<Config>) -> Result<()> {
-    check_exist_service(Arc::clone(&config)).await?;
+    check_service_exists(Arc::clone(&config)).await?;
     cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
     cmd::api::user::utils::check_admin_exists(Arc::clone(&config)).await?;
 

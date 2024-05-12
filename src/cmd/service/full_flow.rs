@@ -67,8 +67,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     // create wallet with network and test_system_user
     for network_id in network_ids.clone() {
-        let wallet =
-            wallet::create::exec(Arc::clone(&config), network_id, test_wallet_pass.into()).await?;
+        let wallet = wallet::create::exec(Arc::clone(&config), network_id).await?;
 
         wallets.push(wallet)
     }

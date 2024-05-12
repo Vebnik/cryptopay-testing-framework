@@ -22,12 +22,14 @@ use crate::{
 /// -> Check and create wallet for tester user
 pub async fn exec(config: Arc<Config>) -> Result<()> {
     cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
-    cmd::service::utils::check_exist_service(Arc::clone(&config)).await?;
+    cmd::service::utils::check_service_exists(Arc::clone(&config)).await?;
 
     cmd::api::user::utils::check_admin_exists(Arc::clone(&config)).await?;
     cmd::api::user::utils::check_tester_exists(Arc::clone(&config)).await?;
 
     cmd::api::network::utils::check_networks_exist(Arc::clone(&config)).await?;
+
+    cmd::evm::deploy::check_contracts_exist(Arc::clone(&config)).await?;
 
     Ok(())
 }

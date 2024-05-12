@@ -5,12 +5,12 @@ use std::sync::Arc;
 
 use crate::{cmd::api, config::Config, Result};
 
-pub async fn exec(config: Arc<Config>, network_id: String, password: String) -> Result<String> {
+pub async fn exec(config: Arc<Config>, network_id: String) -> Result<String> {
     let jwt = api::user::utils::get_user_token(Arc::clone(&config)).await?;
 
     let body = json!({
         "networkId": network_id,
-        "password": password,
+        "password": "test1234test",
     });
 
     let response = reqwest::Client::new()

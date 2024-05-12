@@ -8,7 +8,7 @@ use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
 use std::io;
 
-use crate::{cmd::service, config::Config, Error, Result};
+use crate::{cmd::service, Config, Error, Result};
 
 pub async fn hash(password: &str) -> Result<String> {
     let salt = SaltString::generate(rand::thread_rng());
@@ -165,10 +165,6 @@ pub async fn check_admin_exists(config: Arc<Config>) -> Result<()> {
                 true,
             )
             .await?;
-
-            // println!("{} Admin user created", "[SERVICE]".blue());
-            // let token = get_admin_token(Arc::clone(&config)).await?;
-            // *state.system_user_token.borrow_mut() = Some(token);
         }
     }
 

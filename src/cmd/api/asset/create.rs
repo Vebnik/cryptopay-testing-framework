@@ -12,7 +12,7 @@ pub async fn exec(
     symbol: String,
     address: String,
 ) -> Result<String> {
-    let user_token = get_admin_token(Arc::clone(&config)).await?;
+    let jwt = get_admin_token(Arc::clone(&config)).await?;
 
     let body = json!({
         "networkId": network_id,
@@ -26,7 +26,7 @@ pub async fn exec(
     let response = reqwest::Client::new()
         .post("http://localhost:9999/v1/asset/create")
         .header("Content-Type", "application/json")
-        .header("x-auth-token", user_token.clone())
+        .header("x-auth-token", jwt)
         .body(body.to_string())
         .send()
         .await;
