@@ -1,3 +1,5 @@
+use crate::cmd::service::utils::get_config;
+
 #[tokio::test]
 pub async fn create_provider_test() {
     use alloy::sol;
@@ -14,6 +16,8 @@ pub async fn create_provider_test() {
     };
 
     use crate::config::TEST_WALLETS;
+
+    use crate::cmd::evm::transfer;
 
     sol! {
         #[allow(missing_docs)]
@@ -37,26 +41,40 @@ pub async fn create_provider_test() {
         ]"#,
     );
 
-    let contract_addr = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+    let config = get_config().await.unwrap();
+
+    let contract_addr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
         .parse::<Address>()
         .unwrap();
-    let wallet = TEST_WALLETS[0]
-        .1
+
+    let wallet = TEST_WALLETS[0].1
         .parse::<LocalWallet>()
         .unwrap()
         .with_chain_id(31337u64);
+
     let provider = Provider::<Ws>::connect("ws://127.0.0.1:8545")
         .await
         .unwrap();
-    let client = SignerMiddleware::new(Arc::new(provider), wallet);
 
-    let recipient = TEST_WALLETS[1].0.parse::<Address>().unwrap();
+    // let client = SignerMiddleware::new(Arc::new(provider), wallet);
 
-    let contract = IERC20::new(contract_addr, Arc::new(&client));
+    // let recipient = TEST_WALLETS[1].0.parse::<Address>().unwrap();
+    // let recipient = "0x7d2a29f9191567e6a469c6b6789f452858404f85".parse::<Address>().unwrap();
 
-    contract
-        .transfer(recipient, U256::from(10u32))
-        .send()
-        .await
-        .unwrap();
+    // let contract = IERC20::new(contract_addr, Arc::new(&client));
+
+    transfer::exec_ethers(
+        config,
+        "0x881a9769c4d0d5a7ae6cb7b0a5e0af2f989e4475".into(),
+        TEST_WALLETS[0].1.into(),
+        "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512".into(),
+        100,
+        provider
+    ).await.unwrap();
+
+    // contract
+    //     .transfer(recipient, U256::from(10u32))
+    //     .send()
+    //     .await
+    //     .unwrap();
 }

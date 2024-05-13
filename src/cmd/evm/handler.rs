@@ -13,6 +13,7 @@ pub async fn exec(cmd: EvmCommands, config: Arc<Config>) -> Result<()> {
                 Arc::clone(&config),
                 name.clone(),
                 symbol.clone(),
+                18,
                 amount.clone(),
             )
             .await?;

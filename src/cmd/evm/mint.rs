@@ -33,13 +33,13 @@ pub async fn exec(
         let contract = ERC20::new(contract_addr, provide);
         let amount = U256::from(amount).checked_mul(decimals).unwrap();
 
-        let receipt = contract.mint(target_addr, amount).send().await?.get_receipt().await?;
+        let _ = contract.mint(target_addr, amount).send().await?.get_receipt().await?;
 
         println!(
-            "{} Minted {amount} at address: {:?} ({})",
+            "{} Minted {amount} at address: {:?} | Contract ({})",
             "[EVM]".blue(),
             target_addr.clone(),
-            receipt.transaction_hash
+            contract_addr
         );
     }
 

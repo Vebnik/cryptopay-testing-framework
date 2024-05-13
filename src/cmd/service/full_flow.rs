@@ -4,7 +4,7 @@ use alloy::signers::wallet::LocalWallet;
 use colored::Colorize;
 use ethers::providers::{Provider, Ws};
 
-use crate::config::{Config, TEST_WALLETS};
+use crate::config::{Config, TEST_WALLETS, TEST_TOKENS};
 use crate::{
     cmd::api::{asset, intent, network, user, wallet},
     cmd::evm::{deploy, mint, transfer},
@@ -31,9 +31,10 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     // let test_wallet_pass = "test1234test";
 
     // Test config
-    let wallets_count: usize = 9;
+    let wallets_count: usize = 1;
 
     let mut wallets: Vec<String> = Vec::new();
+    let mut contracts: Vec<Vec<String>> = Vec::with_capacity(TEST_TOKENS.len());
     let mut assets_networks: Vec<NetworkAsset> = Vec::new();
     let mut intents_id: Vec<String> = Vec::new();
 
@@ -56,6 +57,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     let network_ids =
         network::create::exec(Arc::clone(&config), "Local ETH".into(), "EVM".into()).await?;
 
+    // await cryptopay back for hard reset
     service::utils::await_restart().await?;
 
     // create wallet with network and test_system_user
@@ -66,40 +68,51 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     }
 
     // deploy contracts each anvil nodes with sigkey test_system_user
-    let contracts = deploy::exec(
-        Arc::clone(&config),
-        "Test USDT".into(),
-        "TUSDT".into(),
-        10000,
-    )
-    .await?;
-
-    // deploy contracts each anvil nodes with sigkey test_system_user
-    for network_id in network_ids.clone() {
-        let asset_id = asset::create::exec(
+    for (name, symbol, decimals) in TEST_TOKENS {
+        let contracts_address = deploy::exec(
             Arc::clone(&config),
-            network_id.clone(),
-            "Test USDT".into(),
-            "USDT".into(),
-            contracts[0].clone(),
-        )
-        .await?;
-
-        assets_networks.push(NetworkAsset {
-            network_id: network_id.clone(),
-            asset_id,
-        });
-    }
-
-    // mint USDT token to test wallets
-    for (address, _key) in TEST_WALLETS[0..wallets_count].iter() {
-        mint::exec(
-            Arc::clone(&config),
-            address.to_string(),
-            contracts[0].clone(),
+            name.into(),
+            symbol.into(),
+            decimals,
             10000,
         )
         .await?;
+        
+        contracts.push(contracts_address);
+    }
+
+    // create assets
+    for network_id in network_ids.clone() {
+        for (i, (name, symbol, _decimals)) in TEST_TOKENS.iter().enumerate() {
+            let asset_id = asset::create::exec(
+                Arc::clone(&config),
+                network_id.clone(),
+                name.to_string(),
+                symbol.to_string(),
+                contracts[i][0].clone(),
+            )
+            .await?;
+    
+            assets_networks.push(NetworkAsset {
+                network_id: network_id.clone(),
+                asset_id,
+            });
+        }
+    }
+
+    service::utils::await_restart().await?;
+
+    // mint USDT token to test wallets
+    for contracts_address in contracts.clone() {
+        for (address, _key) in TEST_WALLETS[0..wallets_count].iter() {
+            mint::exec(
+                Arc::clone(&config),
+                address.to_string(),
+                contracts_address[0].clone(),
+                10000,
+            )
+            .await?;
+        }
     }
 
     println!("AFTER");
@@ -118,6 +131,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
             intents_id.push(id);
         }
     }
+    service::utils::await_restart().await?;
 
     // create transfer
     // i - index wallet in wallets array on each anvil nodes
@@ -134,16 +148,18 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
         // for wallet on each network -> anvil nodes
         // for test wallet on each anvil nodes
-        for (_address, key) in TEST_WALLETS[0..wallets_count].iter() {
-            transfer::exec_ethers(
-                Arc::clone(&config),
-                wallets[i].clone(),
-                key.to_string(),
-                contracts[0].clone(),
-                500,
-                provider.clone(),
-            )
-            .await?;
+        for addresses in contracts.clone() {
+            for (_address, key) in TEST_WALLETS[0..wallets_count].iter() {
+                transfer::exec_ethers(
+                    Arc::clone(&config),
+                    wallets[i].clone(),
+                    key.to_string(),
+                    addresses[0].clone(),
+                    500,
+                    provider.clone(),
+                )
+                .await?;
+            }
         }
     }
 

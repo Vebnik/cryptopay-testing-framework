@@ -7,7 +7,7 @@ use ethers::{
     signers::{LocalWallet, Signer},
     types,
 };
-use std::{str::FromStr, sync::Arc};
+use std::{str::FromStr, sync::Arc, time::Duration};
 
 use crate::{
     config::{Config, ProviderType},
@@ -104,13 +104,15 @@ pub async fn exec_ethers(
     let client = SignerMiddleware::new(Arc::new(provider), wallet.clone());
     let contract = IERC20::new(contract_addr, Arc::new(&client));
 
+    println!("{} Try to send transaction from {} to {} | at {} contract address", "[EVM]".blue(), wallet.address(), recipient_addr, contract_addr);
+
     contract
         .transfer(recipient_addr, types::U256::from(amount))
         .send()
         .await
         .unwrap();
 
-    println!("{} Send transaction", "[EVM]".blue(),);
+    println!("{} Send transaction", "[EVM]".blue());
 
     println!(
         "{} Transfer {amount} from {} to {}",
@@ -118,6 +120,8 @@ pub async fn exec_ethers(
         wallet.address(),
         recipient.clone()
     );
+
+    tokio::time::sleep(Duration::from_secs(30)).await;
 
     Ok(())
 }

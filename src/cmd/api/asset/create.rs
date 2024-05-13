@@ -59,17 +59,19 @@ pub async fn exec(
 pub async fn check_assets_exist(
     config: Arc<Config>,
     networks: Vec<String>,
-    contracts: Vec<String>,
+    contracts: Vec<Vec<String>>,
 ) -> Result<()> {
     for network_id in networks {
-        let _ = exec(
-            Arc::clone(&config),
-            network_id,
-            "Test USDT".into(),
-            "USDT".into(),
-            contracts[0].clone(),
-        )
-        .await?;
+        for address in contracts.clone() {
+            let _ = exec(
+                Arc::clone(&config),
+                network_id.clone(),
+                "Test USDT".into(),
+                "USDT".into(),
+                address[0].clone(),
+            )
+            .await?;
+        }
     }
 
     Ok(())

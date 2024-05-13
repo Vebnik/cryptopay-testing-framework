@@ -105,3 +105,17 @@ pub static TEST_WALLETS: [(&str, &str); 9] = [
         "0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6",
     ),
 ];
+
+/// array of tuples with token name (0), symbol (1), decimals (2)
+pub static TEST_TOKENS: [(&str, &str, u8); 2] = [
+    (
+        "Test USDT",
+        "USDT",
+        18,
+    ),
+    (
+        "Test USDC",
+        "USDC",
+        18,
+    ),
+];

@@ -9,7 +9,7 @@ use colored::Colorize;
 use std::sync::Arc;
 
 use crate::{
-    config::Config,
+    config::{Config, TEST_TOKENS},
     Result,
 };
 
@@ -24,6 +24,7 @@ pub async fn exec(
     config: Arc<Config>,
     name: String,
     symbol: String,
+    decimals: u8,
     amount: u32,
 ) -> Result<Vec<String>> {
     let wallet = config.core_key.parse::<LocalWallet>()?;
@@ -41,7 +42,7 @@ pub async fn exec(
             provide.clone(),
             name.clone().into(),
             symbol.clone().into(),
-            18,
+            decimals,
             U256::from(amount),
         )
         .await?;
@@ -64,15 +65,22 @@ pub async fn exec(
     Ok(contracts_addresses)
 }
 
-pub async fn check_contracts_exist(config: Arc<Config>) -> Result<Vec<String>> {
+pub async fn check_contracts_exist(config: Arc<Config>) -> Result<Vec<Vec<String>>> {
     // Deploy contracts
-    let contracts = exec(
-        Arc::clone(&config),
-        "Test USDT".into(),
-        "TUSDT".into(),
-        10000,
-    )
-    .await?;
+    let mut contracts: Vec<Vec<String>> = Vec::with_capacity(TEST_TOKENS.len());
+
+    for (name, symbol, decimals) in TEST_TOKENS {
+        let addresses = exec(
+            Arc::clone(&config),
+            name.into(),
+            symbol.into(),
+            decimals,
+            10000
+        )
+        .await?;
+
+        contracts.push(addresses)
+    }
 
     return Ok(contracts);
 }
