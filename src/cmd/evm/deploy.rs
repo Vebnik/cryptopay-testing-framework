@@ -5,15 +5,10 @@ use alloy::{
     signers::wallet::LocalWallet,
     sol,
 };
-use bigdecimal::BigDecimal;
 use colored::Colorize;
-use serde::{Deserialize, Serialize};
-use sqlx::Row;
 use std::sync::Arc;
-use uuid::Uuid;
 
 use crate::{
-    cmd::{self, api},
     config::Config,
     Result,
 };

@@ -1,7 +1,7 @@
 use alloy::{network::EthereumSigner, providers::ProviderBuilder, signers::wallet::LocalWallet};
 use colored::Colorize;
 use sqlx::postgres::PgPoolOptions;
-use std::{process::exit, sync::Arc};
+use std::{io, process::exit, sync::Arc};
 use tokio::net::TcpStream;
 
 use crate::{
@@ -81,6 +81,19 @@ pub async fn check(config: Arc<Config>) -> Result<()> {
     check_service_exists(Arc::clone(&config)).await?;
     cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
     cmd::api::user::utils::check_admin_exists(Arc::clone(&config)).await?;
+
+    Ok(())
+}
+
+pub async fn await_restart() -> Result<()> {
+
+    let mut confirm = String::new();
+    println!(
+        "{} Await for restart cryptopay ... (press enter)",
+        "[SERVICE]".blue()
+    );
+    io::stdin().read_line(&mut confirm).unwrap();
+    println!("{} Restarted ...", "[SERVICE]".blue());
 
     Ok(())
 }

@@ -3,7 +3,6 @@ use std::sync::Arc;
 use alloy::signers::wallet::LocalWallet;
 use colored::Colorize;
 use ethers::providers::{Provider, Ws};
-use std::io;
 
 use crate::config::{Config, TEST_WALLETS};
 use crate::{
@@ -29,7 +28,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     let test_user_name = "Tester";
     let test_user_email = "tester@cryptopay.wtf";
 
-    let test_wallet_pass = "test1234test";
+    // let test_wallet_pass = "test1234test";
 
     // Test config
     let wallets_count: usize = 9;
@@ -57,13 +56,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     let network_ids =
         network::create::exec(Arc::clone(&config), "Local ETH".into(), "EVM".into()).await?;
 
-    let mut confirm = String::new();
-    println!(
-        "{} Await for restart cryptopay ... (press enter)",
-        "[SERVICE]".blue()
-    );
-    io::stdin().read_line(&mut confirm).unwrap();
-    println!("{} Restarted ...", "[SERVICE]".blue());
+    service::utils::await_restart().await?;
 
     // create wallet with network and test_system_user
     for network_id in network_ids.clone() {

@@ -8,7 +8,6 @@ pub mod tests;
 
 use clap::Parser;
 use cmd::service::utils::{check, get_config};
-use colored::Colorize;
 use std::sync::Arc;
 
 use cli::Scope;

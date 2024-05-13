@@ -1,13 +1,10 @@
 use std::sync::Arc;
 
-use alloy::signers::wallet::LocalWallet;
 use colored::Colorize;
-use ethers::providers::{Provider, Ws};
-use std::io;
 
 use crate::{
     cmd,
-    config::{Config, TEST_WALLETS},
+    config::Config,
     Result,
 };
 
@@ -34,11 +31,11 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     let contracts = cmd::evm::deploy::check_contracts_exist(Arc::clone(&config)).await?;
 
-    let assets =
+    let _ =
         cmd::api::asset::check_assets_exist(Arc::clone(&config), networks.clone(), contracts)
             .await?;
 
-    let wallets = cmd::api::wallet::check_wallets_exist(Arc::clone(&config), networks).await?;
+    let _ = cmd::api::wallet::check_wallets_exist(Arc::clone(&config), networks).await?;
 
     println!(
         "{} Service prepared for development",

@@ -6,7 +6,6 @@ use std::sync::Arc;
 
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
-use std::io;
 
 use crate::{cmd::service, Config, Error, Result};
 
@@ -156,7 +155,7 @@ pub async fn check_admin_exists(config: Arc<Config>) -> Result<()> {
             println!("{} Admin user exists: ({})", "[SERVICE]".blue(), data);
         }
         Err(err) => {
-            println!("{} Admin user does not exist, creating", "[SERVICE]".blue(),);
+            println!("{} Admin user does not exist, creating ({err})", "[SERVICE]".blue(),);
 
             super::create::exec(
                 Arc::clone(&config),
@@ -185,7 +184,7 @@ pub async fn check_tester_exists(config: Arc<Config>) -> Result<()> {
         }
         Err(err) => {
             println!(
-                "{} Tester user does not exist, creating",
+                "{} Tester user does not exist, creating ({err})",
                 "[SERVICE]".blue(),
             );
 

@@ -1,12 +1,11 @@
 use colored::Colorize;
-use serde::Deserialize;
-use serde_json::Value;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::{cmd, Config, Result};
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 struct Network {
     pub id: Uuid,
     pub name: String,
