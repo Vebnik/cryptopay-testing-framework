@@ -55,7 +55,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     // create networks
     let network_ids =
-        network::create::exec(Arc::clone(&config), "Local ETH".into(), "EVM".into()).await?;
+        network::create::exec(Arc::clone(&config), "LOCAL_EVM".into(), "EVM".into()).await?;
 
     // await cryptopay back for hard reset
     service::utils::await_restart().await?;

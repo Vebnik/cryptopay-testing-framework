@@ -2,7 +2,7 @@ use alloy::{primitives, sol};
 use colored::Colorize;
 use ethers::{
     contract::abigen,
-    middleware::SignerMiddleware,
+    middleware::{MiddlewareBuilder, SignerMiddleware},
     providers::{Provider, Ws},
     signers::{LocalWallet, Signer},
     types,
@@ -104,7 +104,13 @@ pub async fn exec_ethers(
     let client = SignerMiddleware::new(Arc::new(provider), wallet.clone());
     let contract = IERC20::new(contract_addr, Arc::new(&client));
 
-    println!("{} Try to send transaction from {} to {} | at {} contract address", "[EVM]".blue(), wallet.address(), recipient_addr, contract_addr);
+    println!(
+        "{} Try to send transaction from {} to {} | at {} contract address",
+        "[EVM]".blue(),
+        wallet.address(),
+        recipient_addr,
+        contract_addr
+    );
 
     contract
         .transfer(recipient_addr, types::U256::from(amount))
