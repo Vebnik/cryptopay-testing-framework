@@ -31,7 +31,7 @@ pub enum EvmCommands {
 pub enum NetworkCommands {
     /// Create new network
     Create {
-        #[arg(default_value = "Local ETH")]
+        #[arg(default_value = "LOCAL_EVM")]
         name: String,
         #[arg(default_value = "EVM")]
         kind: String,
