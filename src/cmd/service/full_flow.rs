@@ -135,7 +135,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     // create transfer
     // i - index wallet in wallets array on each anvil nodes
-    for (i, port) in (8545..(8545 + config.anvil_nodes as i32)).enumerate() {
+    for (i, port) in (8545..(8545 + config.evm_nodes as i32)).enumerate() {
         println!(
             "{} On anvil: {}",
             "[DUBUG]".yellow(),

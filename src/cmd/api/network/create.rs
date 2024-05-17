@@ -7,9 +7,9 @@ use crate::{cmd::api::user::utils::get_admin_token, config::Config, Result};
 
 pub async fn exec(config: Arc<Config>, name: String, kind: String) -> Result<Vec<String>> {
     let jwt = get_admin_token(Arc::clone(&config)).await?;
-    let mut networks_id: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
+    let mut networks_id: Vec<String> = Vec::with_capacity(config.evm_nodes as usize);
 
-    for port in 8545..(8545 + config.anvil_nodes as i32) {
+    for port in 8545..(8545 + config.evm_nodes as i32) {
         let body = json!({
             "name": format!("{name}_{}", port),
             "kind": kind,

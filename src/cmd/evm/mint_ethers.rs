@@ -53,7 +53,7 @@ pub async fn exec(
     let target_addr = Address::from_str(&address).map_err(|_| Error::EthersHex)?;
     let decimals = U256::from(10).checked_pow(U256::from(18)).unwrap();
 
-    for port in 8545..(8545 + config.anvil_nodes as i32) {
+    for port in 8545..(8545 + config.evm_nodes as i32) {
         let provider = Provider::<Ws>::connect(format!("ws://127.0.0.1:{port}"))
             .await
             .unwrap();

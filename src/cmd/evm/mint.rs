@@ -25,7 +25,7 @@ pub async fn exec(
     let target_addr = Address::from_str(&address)?;
     let decimals = U256::from(10).checked_pow(U256::from(18)).unwrap();
 
-    for port in 8545..(8545 + config.anvil_nodes as i32) {
+    for port in 8545..(8545 + config.evm_nodes as i32) {
         let provide = ProviderBuilder::new()
             .on_builtin(&format!("http://localhost:{}", port))
             .await?;
