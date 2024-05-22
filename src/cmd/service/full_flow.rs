@@ -55,7 +55,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     // create networks
     let network_ids =
-        network::create::exec(Arc::clone(&config), "Local ETH".into(), "EVM".into()).await?;
+        network::create::exec(Arc::clone(&config), "LOCAL_EVM".into(), "EVM".into()).await?;
 
     // await cryptopay back for hard reset
     service::utils::await_restart().await?;
@@ -135,7 +135,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     // create transfer
     // i - index wallet in wallets array on each anvil nodes
-    for (i, port) in (8545..(8545 + config.anvil_nodes as i32)).enumerate() {
+    for (i, port) in (8545..(8545 + config.evm_nodes as i32)).enumerate() {
         println!(
             "{} On anvil: {}",
             "[DUBUG]".yellow(),

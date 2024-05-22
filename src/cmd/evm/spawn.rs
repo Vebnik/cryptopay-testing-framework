@@ -17,7 +17,13 @@ pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<()> {
     let mut instances = Vec::with_capacity(amount_nodes as usize);
 
     for port in 8545u32..(8545u32 + amount_nodes) {
-        println!("{} Spawning node on port: {port}", "[EVM]".blue());
+        let max = 8545 + amount_nodes;
+        let diff = max - port;
+        let chain_id = 31337 + amount_nodes - diff;
+        println!(
+            "{} Spawning node on port: {port} with chain_id: {chain_id} ",
+            "[EVM]".blue()
+        );
 
         let mut cmd = Command::new("anvil")
             .arg("-p")
@@ -26,6 +32,8 @@ pub async fn exec<'a>(_config: Arc<Config>, amount_nodes: u32) -> Result<()> {
             .arg("10")
             .arg("--slots-in-an-epoch")
             .arg("1")
+            .arg("--chain-id")
+            .arg(chain_id.to_string())
             // .arg("--auto-impersonate")
             // .arg("--prune-history")
             .stdout(Stdio::null())

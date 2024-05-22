@@ -20,6 +20,28 @@ pub enum EvmCommands {
         #[arg(default_value = "100")]
         amount: u32,
     },
+    /// Transfer token from address to address
+    Tx {
+        /// Chain index
+        /// 0 - LOCAL_EVM_8545 (31337)
+        /// 1 - LOCAL_EVM_8546 (31338)
+        #[arg(long, default_value = "0")]
+        chain_idx: u16,
+        /// Contract address
+        #[arg(long, default_value = "0x5fbdb2315678afecb367f032d93f642f64180aa3")]
+        contract: String,
+        /// Sender account index
+        /// 0 - core wallet
+        /// 1 - tester wallet
+        /// 2 - tester wallet
+        #[arg(long, default_value = "1")]
+        sender_idx: u32,
+        /// Recipient address
+        #[arg(long, default_value = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")]
+        recipient: String,
+        #[arg(long, default_value = "100")]
+        amount: u32,
+    },
     /// Spawn new local blockchain node
     Spawn {
         #[arg(default_value = "2")]
@@ -31,7 +53,7 @@ pub enum EvmCommands {
 pub enum NetworkCommands {
     /// Create new network
     Create {
-        #[arg(default_value = "Local ETH")]
+        #[arg(default_value = "LOCAL_EVM")]
         name: String,
         #[arg(default_value = "EVM")]
         kind: String,

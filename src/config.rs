@@ -28,7 +28,8 @@ pub struct Config {
     pub cryptopay_url: String,
     pub db_host: String,
     pub db_connect_url: String,
-    pub anvil_nodes: i8,
+    pub evm_nodes: i8,
+    pub evm_port: u16,
 
     pub core_key: String,
     pub core_address: String,
@@ -43,6 +44,7 @@ pub struct State {
     pub provider: ProviderType,
     pub db: Pool<Postgres>,
     pub args: Args,
+
     pub system_user_token: RefCell<Option<String>>,
 }
 
@@ -51,12 +53,12 @@ impl Default for Config {
         Self {
             cryptopay_url: "http://127.0.0.1:9999".into(),
             anvil_endpoint: "http://127.0.0.1:8545".into(),
+            evm_port: 8545,
             db_host: "127.0.0.1:5432".into(),
-            db_connect_url: "postgres://postgres:postgres@localhost:5432/test".into(),
-            anvil_nodes: 2,
+            db_connect_url: "postgres://postgres:postgres@localhost:5432/cryptopay".into(),
+            evm_nodes: 2,
 
-            core_key: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-                .into(),
+            core_key: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80".into(),
             core_address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266".into(),
 
             test_priv_key: "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
@@ -107,15 +109,5 @@ pub static TEST_WALLETS: [(&str, &str); 9] = [
 ];
 
 /// array of tuples with token name (0), symbol (1), decimals (2)
-pub static TEST_TOKENS: [(&str, &str, u8); 2] = [
-    (
-        "Test USDT",
-        "USDT",
-        18,
-    ),
-    (
-        "Test USDC",
-        "USDC",
-        18,
-    ),
-];
+pub static TEST_TOKENS: [(&str, &str, u8); 2] =
+    [("Test USDT", "USDT", 18), ("Test USDC", "USDC", 18)];

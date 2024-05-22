@@ -29,9 +29,9 @@ pub async fn exec(
 ) -> Result<Vec<String>> {
     let wallet = config.core_key.parse::<LocalWallet>()?;
 
-    let mut contracts_addresses: Vec<String> = Vec::with_capacity(config.anvil_nodes as usize);
+    let mut contracts_addresses: Vec<String> = Vec::with_capacity(config.evm_nodes as usize);
 
-    for port in 8545..(8545 + config.anvil_nodes as i32) {
+    for port in 8545..(8545 + config.evm_nodes as i32) {
         let provide = ProviderBuilder::new()
             .with_recommended_fillers()
             .signer(EthereumSigner::from(wallet.clone()))

@@ -22,7 +22,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
     cmd::db::utils::check_db_exists(Arc::clone(&config)).await?;
     cmd::service::utils::check_service_exists(Arc::clone(&config)).await?;
 
-    cmd::db::reset::exec(Arc::clone(&config)).await?;
+    // cmd::db::reset::exec(Arc::clone(&config)).await?;
 
     cmd::api::user::utils::check_admin_exists(Arc::clone(&config)).await?;
     cmd::api::user::utils::check_tester_exists(Arc::clone(&config)).await?;
@@ -36,6 +36,8 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
             .await?;
 
     let _ = cmd::api::wallet::check_wallets_exist(Arc::clone(&config), networks).await?;
+    
+    // let _ = cmd::api::hot_wallet::check_wallets_exist(Arc::clone(&config)).await?;
 
     println!(
         "{} Service prepared for development",
