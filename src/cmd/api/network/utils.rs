@@ -1,9 +1,8 @@
-use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;
 
-use crate::{cmd, Config, Result};
+use crate::{cmd::{self, service::utils}, Config, Result};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 struct Network {
@@ -17,13 +16,7 @@ pub async fn check_networks_exist(config: Arc<Config>) -> Result<Vec<String>> {
         cmd::api::network::create::exec(Arc::clone(&config), "LOCAL_EVM".into(), "EVM".into())
             .await?;
 
-    let mut confirm = String::new();
-    println!(
-        "{} Await for restart cryptopay ... (press enter)",
-        "[SERVICE]".blue()
-    );
-    std::io::stdin().read_line(&mut confirm).unwrap();
-    println!("{} Restarted ...", "[SERVICE]".blue());
+    utils::await_restart().await?;
 
     return Ok(ids);
 }
