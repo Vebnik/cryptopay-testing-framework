@@ -74,8 +74,8 @@ pub async fn transfer_test() {
 
 #[tokio::test]
 pub async fn balance_test() {
-    use alloy::providers::fillers::{ChainIdFiller, GasFiller, NonceFiller};
     use alloy::primitives::U256;
+    use alloy::providers::fillers::{ChainIdFiller, GasFiller, NonceFiller};
     use alloy::{
         network::EthereumSigner, providers::ProviderBuilder, signers::wallet::LocalWallet,
     };

@@ -86,7 +86,6 @@ pub async fn check(config: Arc<Config>) -> Result<()> {
 }
 
 pub async fn await_restart() -> Result<()> {
-
     let mut confirm = String::new();
     println!(
         "{} Await for restart cryptopay ... (press enter)",

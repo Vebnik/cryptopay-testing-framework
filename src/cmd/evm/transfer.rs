@@ -2,7 +2,7 @@ use alloy::{primitives, sol};
 use colored::Colorize;
 use ethers::{
     contract::abigen,
-    middleware::{MiddlewareBuilder, SignerMiddleware},
+    middleware::SignerMiddleware,
     providers::{Provider, Ws},
     signers::{LocalWallet, Signer},
     types,

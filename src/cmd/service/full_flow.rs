@@ -4,7 +4,7 @@ use alloy::signers::wallet::LocalWallet;
 use colored::Colorize;
 use ethers::providers::{Provider, Ws};
 
-use crate::config::{Config, TEST_WALLETS, TEST_TOKENS};
+use crate::config::{Config, TEST_TOKENS, TEST_WALLETS};
 use crate::{
     cmd::api::{asset, intent, network, user, wallet},
     cmd::evm::{deploy, mint, transfer},
@@ -77,7 +77,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
             10000,
         )
         .await?;
-        
+
         contracts.push(contracts_address);
     }
 
@@ -92,7 +92,7 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
                 contracts[i][0].clone(),
             )
             .await?;
-    
+
             assets_networks.push(NetworkAsset {
                 network_id: network_id.clone(),
                 asset_id,

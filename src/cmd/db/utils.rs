@@ -12,7 +12,10 @@ pub async fn check_db_exists(config: Arc<Config>) -> Result<()> {
 
     match does_exist {
         false => {
-            println!("{} Database does not exist, trying to create", "[DB]".blue());
+            println!(
+                "{} Database does not exist, trying to create",
+                "[DB]".blue()
+            );
             sqlx::Postgres::create_database(&config.db_connect_url).await?;
             println!("{} Success creating database", "[DB]".blue());
 

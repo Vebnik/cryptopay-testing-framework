@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{Result, cli::DbCommands, cmd::db, config::Config};
+use crate::{cli::DbCommands, cmd::db, config::Config, Result};
 
 pub async fn exec(cmd: DbCommands, config: Arc<Config>) -> Result<()> {
     match cmd {

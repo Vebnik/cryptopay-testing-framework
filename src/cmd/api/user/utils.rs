@@ -155,7 +155,10 @@ pub async fn check_admin_exists(config: Arc<Config>) -> Result<()> {
             println!("{} Admin user exists: ({})", "[SERVICE]".blue(), data);
         }
         Err(err) => {
-            println!("{} Admin user does not exist, creating ({err})", "[SERVICE]".blue(),);
+            println!(
+                "{} Admin user does not exist, creating ({err})",
+                "[SERVICE]".blue(),
+            );
 
             super::create::exec(
                 Arc::clone(&config),

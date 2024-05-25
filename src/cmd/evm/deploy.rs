@@ -75,7 +75,7 @@ pub async fn check_contracts_exist(config: Arc<Config>) -> Result<Vec<Vec<String
             name.into(),
             symbol.into(),
             decimals,
-            10000
+            10000,
         )
         .await?;
 

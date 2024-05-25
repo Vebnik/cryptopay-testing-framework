@@ -1,18 +1,13 @@
-use crate::cmd::service::utils::get_config;
-
 #[tokio::test]
 pub async fn create_provider_test() {
+    use crate::cmd::service::utils::get_config;
     use alloy::sol;
-    use std::sync::Arc;
 
     use ethers::{
         contract::abigen,
-        middleware::SignerMiddleware,
         providers::{Provider, Ws},
-        signers::{LocalWallet, Signer},
-        types::{
-            Address, U256,
-        },
+        // signers::{LocalWallet, Signer},
+        // types::Address,
     };
 
     use crate::config::TEST_WALLETS;
@@ -43,14 +38,14 @@ pub async fn create_provider_test() {
 
     let config = get_config().await.unwrap();
 
-    let contract_addr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-        .parse::<Address>()
-        .unwrap();
+    // let contract_addr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    //     .parse::<Address>()
+    //     .unwrap();
 
-    let wallet = TEST_WALLETS[0].1
-        .parse::<LocalWallet>()
-        .unwrap()
-        .with_chain_id(31337u64);
+    // let wallet = TEST_WALLETS[0].1
+    //     .parse::<LocalWallet>()
+    //     .unwrap()
+    //     .with_chain_id(31337u64);
 
     let provider = Provider::<Ws>::connect("ws://127.0.0.1:8545")
         .await
@@ -69,8 +64,10 @@ pub async fn create_provider_test() {
         TEST_WALLETS[0].1.into(),
         "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512".into(),
         100,
-        provider
-    ).await.unwrap();
+        provider,
+    )
+    .await
+    .unwrap();
 
     // contract
     //     .transfer(recipient, U256::from(10u32))

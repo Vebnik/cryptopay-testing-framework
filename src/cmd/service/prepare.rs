@@ -2,11 +2,7 @@ use std::sync::Arc;
 
 use colored::Colorize;
 
-use crate::{
-    cmd,
-    config::Config,
-    Result,
-};
+use crate::{cmd, config::Config, Result};
 
 /// Prepare the service for development
 /// -> Check if the database exists ✅
@@ -31,12 +27,11 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     let contracts = cmd::evm::deploy::check_contracts_exist(Arc::clone(&config)).await?;
 
-    let _ =
-        cmd::api::asset::check_assets_exist(Arc::clone(&config), networks.clone(), contracts)
-            .await?;
+    let _ = cmd::api::asset::check_assets_exist(Arc::clone(&config), networks.clone(), contracts)
+        .await?;
 
     let _ = cmd::api::wallet::check_wallets_exist(Arc::clone(&config), networks).await?;
-    
+
     // let _ = cmd::api::hot_wallet::check_wallets_exist(Arc::clone(&config)).await?;
 
     println!(

@@ -52,4 +52,3 @@ pub async fn exec(config: Arc<Config>, network_id: String) -> Result<String> {
 
     Ok("None".into())
 }
-
