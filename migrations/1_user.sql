@@ -5,7 +5,6 @@ create table "user"
     name            text        not null,
     email           text        unique not null,
     password        text        not null,
-    fee             numeric     not null,
     currency        text        not null,
     is_admin        boolean     not null default false,
 
