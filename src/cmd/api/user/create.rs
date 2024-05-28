@@ -1,4 +1,4 @@
-use bigdecimal::{BigDecimal, FromPrimitive};
+// use bigdecimal::{BigDecimal, FromPrimitive};
 use colored::Colorize;
 use reqwest::StatusCode;
 use serde_json::json;
@@ -15,16 +15,15 @@ const PASSWORD: &str = "test1234";
 async fn create_admin(config: Arc<Config>, name: String, email: String) -> Result<()> {
     let db = service::utils::get_db(Arc::clone(&config)).await?;
 
-    let fee = BigDecimal::from_u32(2).expect("valid");
     let encrypted = api::user::utils::hash(PASSWORD).await?;
 
     let query = format!(
         r#"
-        INSERT INTO "user" ("name", "email", "password", "fee", "currency", "is_admin", "is_verified", "email_token")
-        VALUES ('{}', '{}', '{}', {}, '{}', true, true, null)
+        INSERT INTO "user" ("name", "email", "password", "currency", "is_admin", "is_verified", "email_token")
+        VALUES ('{}', '{}', '{}', '{}', true, true, null)
         RETURNING id
         "#,
-        name, email, encrypted, fee, "EUR"
+        name, email, encrypted, "EUR"
     );
 
     let result = sqlx::raw_sql(&query).execute(&db).await;

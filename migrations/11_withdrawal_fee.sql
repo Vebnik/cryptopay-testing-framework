@@ -4,10 +4,10 @@ create table "withdrawal_fee"
 
     min_condition     numeric,
     max_condition     numeric,
-    fee_percent       numeric,
+    fee_percent       numeric     not null,
 
-    created_at      timestamp   not null default now(),
-    updated_at      timestamp   not null default now()
+    created_at        timestamp   not null default now(),
+    updated_at        timestamp   not null default now()
 );
 
 create index "withdrawal_fee_min_condition_idx" on "withdrawal_fee" (min_condition);
