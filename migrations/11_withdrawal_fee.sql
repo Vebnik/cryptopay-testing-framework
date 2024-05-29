@@ -5,7 +5,7 @@ create table "withdrawal_fee"
     min_condition     numeric,
     max_condition     numeric,
     fee_percent       numeric     not null,
-    is_default        boolean     not null default true,
+    is_default        boolean     not null default false,
 
     created_at        timestamp   not null default now(),
     updated_at        timestamp   not null default now()
