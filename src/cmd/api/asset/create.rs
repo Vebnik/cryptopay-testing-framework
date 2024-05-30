@@ -3,7 +3,7 @@ use reqwest::{self, StatusCode};
 use serde_json::{json, Value};
 use std::sync::Arc;
 
-use crate::{cmd::api::user::utils::get_admin_token, config::Config, Result};
+use crate::{cmd::api::user::utils::get_admin_token, config::{Config, TEST_TOKENS}, Result};
 
 pub async fn exec(
     config: Arc<Config>,
@@ -62,13 +62,13 @@ pub async fn check_assets_exist(
     contracts: Vec<Vec<String>>,
 ) -> Result<()> {
     for network_id in networks {
-        for address in contracts.clone() {
+        for (i, address) in contracts.clone().iter().enumerate() {
             let _ = exec(
                 Arc::clone(&config),
                 network_id.clone(),
-                "Test USDT".into(),
-                "USDT".into(),
-                address[0].clone(),
+                TEST_TOKENS[i].0.into(),
+                TEST_TOKENS[i].1.into(),
+                address[i].clone(),
             )
             .await?;
         }

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;
 
-use crate::{cmd::{self, service::utils}, Config, Result};
+use crate::{cmd, Config, Result};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 struct Network {
@@ -15,8 +15,6 @@ pub async fn check_networks_exist(config: Arc<Config>) -> Result<Vec<String>> {
     let ids =
         cmd::api::network::create::exec(Arc::clone(&config), "LOCAL_EVM".into(), "EVM".into())
             .await?;
-
-    utils::await_restart().await?;
 
     return Ok(ids);
 }

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use colored::Colorize;
 
-use crate::{cmd, config::Config, Result};
+use crate::{cmd::{self, service::utils}, config::Config, Result};
 
 /// Prepare the service for development
 /// -> Check if the database exists ✅
@@ -25,7 +25,13 @@ pub async fn exec(config: Arc<Config>) -> Result<()> {
 
     let networks = cmd::api::network::utils::check_networks_exist(Arc::clone(&config)).await?;
 
+    dbg!(networks.len());
+
+    utils::await_restart().await?;
+
     let contracts = cmd::evm::deploy::check_contracts_exist(Arc::clone(&config)).await?;
+
+    dbg!(contracts.len());
 
     let _ = cmd::api::asset::check_assets_exist(Arc::clone(&config), networks.clone(), contracts)
         .await?;
