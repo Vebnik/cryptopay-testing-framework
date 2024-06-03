@@ -11,6 +11,7 @@ create table "intent"
     user_id             uuid        not null references "user" (id),
     network_id          uuid        not null references "network" (id),
     asset_id            uuid        not null references "asset" (id),
+    hot_wallet_id       uuid        not null references "hot_wallet" (id),
 
     created_at          timestamp   not null default now(),
     updated_at          timestamp   not null default now()
@@ -22,5 +23,6 @@ create index "intent_expiry_idx" on "intent" (expiry);
 create index "intent_user_id_idx" on "intent" (user_id);
 create index "intent_network_id_idx" on "intent" (network_id);
 create index "intent_asset_id_idx" on "intent" (asset_id);
+create index "intent_hot_wallet_id_idx" on "intent" (hot_wallet_id);
 create index "intent_created_at_idx" on "intent" (created_at);
 create index "intent_updated_at_idx" on "intent" (updated_at);
